@@ -1,3 +1,5 @@
 # microservice specific routes
 
-GET        /hello-world             uk.gov.hmrc.bankaccountgateway.controllers.MicroserviceHelloWorldController.hello
+POST        /verify/personal            uk.gov.hmrc.bankaccountgateway.controllers.BankAccountReputationController.any()
+POST        /verify/business            uk.gov.hmrc.bankaccountgateway.controllers.BankAccountReputationController.any()
+POST        /check/insights             uk.gov.hmrc.bankaccountgateway.controllers.BankAccountInsightsController.any()
