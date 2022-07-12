@@ -1,0 +1,64 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/object1614266033.json",
+  "title": "Root",
+  "type": "object",
+  "required": [
+    "account",
+    "business"
+  ],
+  "properties": {
+    "account": {
+      "$id": "#root/account",
+      "title": "Account",
+      "type": "object",
+      "required": [
+        "accountNumber",
+        "sortCode"
+      ],
+      "properties": {
+        "accountNumber": {
+          "$id": "#root/account/accountNumber",
+          "title": "Account Number",
+          "description": "The bank account number, 8 characters long",
+          "type": "string",
+          "examples": [
+            "14378881",
+            "07336121"
+          ]
+        },
+        "sortCode": {
+          "$id": "#root/account/sortCode",
+          "title": "Sortcode",
+          "description": "The bank sort code, 6 characters long (whitespace and/or dashes should be removed)",
+          "type": "string",
+          "examples": [
+            "463509"
+          ]
+        }
+      }
+    }
+  ,
+    "business": {
+      "$id": "#root/business",
+      "title": "Business",
+      "type": "object",
+      "required": [
+        "companyName"
+      ],
+      "properties": {
+        "companyName": {
+          "$id": "#root/business/companyName",
+          "title": "Companyname",
+          "description": "The account name provided to the bank (usually the same as the registered company name, but with complex company setups this may not be true)",
+          "type": "string",
+          "examples": [
+            "co ltd"
+          ]
+        }
+      }
+    }
+
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "account": {
+    "sortCode": "991122",
+    "accountNumber": "12345678"
+  },
+  "subject": {
+    "title": "Mr",
+    "name": "John Smith",
+    "dob": "1970-12-31"
+  }
+}

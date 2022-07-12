@@ -1,0 +1,12 @@
+{
+  "accountExists": "yes",
+  "accountNumberIsWellFormatted": "yes",
+  "nameMatches": "partial",
+  "accountName": "ACME Inc",
+  "sortCodeBankName": "NATWEST",
+  "nonStandardAccountDetailsRequiredForBacs": "no",
+  "sortCodeIsPresentOnEISCD": "no",
+  "sortCodeSupportsDirectDebit":  "no",
+  "sortCodeSupportsDirectCredit": "no",
+  "iban": "GB25NWBK60080600724890"
+}

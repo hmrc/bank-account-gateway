@@ -1,0 +1,10 @@
+{
+  "accountNumberIsWellFormatted": "no",
+  "nonStandardAccountDetailsRequiredForBacs": "inapplicable",
+  "sortCodeBankName": "BARCLAYS BANK PLC",
+  "sortCodeIsPresentOnEISCD": "yes",
+  "sortCodeSupportsDirectDebit": "yes",
+  "sortCodeSupportsDirectCredit": "no",
+  "accountExists": "inapplicable",
+  "nameMatches": "inapplicable"
+}

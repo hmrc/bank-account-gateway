@@ -1,0 +1,9 @@
+{
+  "accountNumberIsWellFormatted": "indeterminate",
+  "nonStandardAccountDetailsRequiredForBacs": "no",
+  "sortCodeIsPresentOnEISCD": "no",
+  "sortCodeSupportsDirectDebit": "no",
+  "sortCodeSupportsDirectCredit": "no",
+  "accountExists": "inapplicable",
+  "nameMatches": "inapplicable"
+}

@@ -1,0 +1,140 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/object1614270513.json",
+  "title": "Root",
+  "type": "object",
+  "required": [
+    "accountNumberIsWellFormatted",
+    "nonStandardAccountDetailsRequiredForBacs",
+    "sortCodeIsPresentOnEISCD",
+    "sortCodeSupportsDirectDebit",
+    "sortCodeSupportsDirectCredit",
+    "accountExists",
+    "nameMatches"
+  ],
+  "properties": {
+    "accountNumberIsWellFormatted": {
+      "$id": "#root/accountNumberIsWellFormatted",
+      "description": "Account number with sortcode is valid",
+      "type": "string",
+      "oneOf": [
+        {"enum":["yes"], "description":"The sort code is known and the sort code and account number are correctly formatted and their contents pass our checks"},
+        {"enum":["no"], "description":"The sort code is known but the account number and sort code combination did not pass our checks"},
+        {"enum":["indeterminate"], "description":"The sort code is unknown, it may be valid but more likely will not resolve to an addressable bank account"},
+        {"enum":["error"], "description":"There was an error attempting to perform a modulus check"}
+      ],
+      "examples": [
+        "no"
+      ]
+    },
+    "nonStandardAccountDetailsRequiredForBacs": {
+      "$id": "#root/nonStandardAccountDetailsRequiredForBacs",
+      "description": "Non-standard account details required for BACS",
+      "type": "string",
+      "oneOf": [
+        {"enum":["yes"], "description":"Indicates that a BACS transaction for this account will require additional information (e.g. a Building Society roll number)"},
+        {"enum":["no"], "description":"Indicates that a BACS transaction for this account will NOT require additional information (e.g. a Building Society roll number)"},
+        {"enum":["inapplicable"], "description":"The sort code and/or account number failed initial validation, and so no further checks were made"},
+        {"enum":["error"], "description":"There was an error when checking if branch requires non-standard details"}
+      ],
+      "examples": [
+        "inapplicable"
+      ]
+    },
+    "sortCodeBankName": {
+      "$id": "#root/sortCodeBankName",
+      "description": "Sortcode bank name",
+      "type": "string",
+      "examples": [
+        "THE ROYAL BANK OF SCOTLAND PLC"
+      ]
+    },
+    "sortCodeIsPresentOnEISCD": {
+      "$id": "#root/sortCodeIsPresentOnEISCD",
+      "description": "Sortcode is present on EISCD",
+      "type": "string",
+      "oneOf": [
+        {"enum":["yes"], "description":"The sort code given was found by the service"},
+        {"enum":["no"], "description":"The sort code given was NOT found by the service"},
+        {"enum":["error"], "description":"There was an error checking the EISCD data"}
+      ],
+      "examples": [
+        "yes"
+      ]
+    },
+    "sortCodeSupportsDirectDebit": {
+      "$id": "#root/sortCodeSupportsDirectDebit",
+      "title": "Whether sortcode supports direct debit payment and setup",
+      "type": "string",
+      "oneOf": [
+        {"enum":["yes"], "description":"The sort code supports direct debit payment and setup"},
+        {"enum":["no"], "description":"The sort code does not support direct debit payment or setup"},
+        {"enum":["error"], "description":"There was an error checking the EISCD data"}
+      ],
+      "examples": [
+        "no"
+      ]
+    },
+    "sortCodeSupportsDirectCredit": {
+      "$id": "#root/sortCodeSupportsDirectCredit",
+      "title": "Whether sortcode supports direct credit payment",
+      "type": "string",
+      "oneOf": [
+        {"enum":["yes"], "description":"The sort code supports direct credit payment"},
+        {"enum":["no"], "description":"The sort code does not support direct debit payment"},
+        {"enum":["error"], "description":"There was an error checking the EISCD data"}
+      ],
+      "examples": [
+        "no"
+      ]
+    },
+    "iban": {
+      "$id": "#root/iban",
+      "title": "The IBAN for the given account number / sort code",
+      "type": "string",
+      "examples": [
+        "GB25NWBK60080600724890"
+      ]
+    },
+    "accountExists": {
+      "$id": "#root/accountExists",
+      "description": "Account exists",
+      "type": "string",
+      "oneOf": [
+        {"enum":["yes"], "description":"The sort code and account number relate to a bank account stored in the third party service"},
+        {"enum":["no"], "description":"The third party service asserted that the account number was not valid for the given sort code"},
+        {"enum":["indeterminate"], "description":"The sort code and account number were not found in the third party service"},
+        {"enum":["inapplicable"], "description":"The sort code and/or account number failed initial validation, and so no further checks were made"},
+        {"enum":["error"], "description":"There was an error calling the third party service"}
+      ],
+      "examples": [
+        "indeterminate"
+      ]
+    },
+    "nameMatches": {
+      "$id": "#root/nameMatches",
+      "description": "Name matches",
+      "type": "string",
+      "oneOf": [
+        {"enum":["yes"], "description":"The provided subject name was found to match the account holder name stored by the third party service"},
+        {"enum":["no"], "description":"No match was found for the provided subject name in the third party service"},
+        {"enum":["partial"], "description":"After normalisation, the provided business name was found to be a close match to the one stored by the third party service E.g 'Mr P Smith' vs 'Mr Peter Smith'."},
+        {"enum":["indeterminate"], "description":"The sort code and account number did not resolve to an account stored in the third party service"},
+        {"enum":["inapplicable"], "description":"The sort code and/or account number failed initial validation, and so no further checks were made"},
+        {"enum":["error"], "description":"There was an error calling the third party service"}
+      ],
+      "examples": [
+        "no"
+      ]
+    },
+    "accountName": {
+      "$id": "#root/accountName",
+      "description": "In the case of a partial name match, this will be the name on the account as reported by the third party",
+      "type": "string",
+      "examples": [
+        "Mr Peter Smith"
+      ]
+    }
+  }
+}

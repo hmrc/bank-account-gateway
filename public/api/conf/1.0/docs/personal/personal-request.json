@@ -1,0 +1,58 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/object1614264206.json",
+  "title": "Root",
+  "type": "object",
+  "required": [
+    "account",
+    "subject"
+  ],
+  "properties": {
+    "account": {
+      "$id": "#root/account",
+      "description": "Account",
+      "type": "object",
+      "required": [
+        "accountNumber",
+        "sortCode"
+      ],
+      "properties": {
+        "accountNumber": {
+          "$id": "#root/account/accountNumber",
+          "description": "The bank account number, 8 digits long",
+          "type": "string",
+          "examples": [
+            "79499414",
+            "07336121"
+          ]
+        },
+        "sortCode": {
+          "$id": "#root/account/sortCode",
+          "description": "The bank sort code, 6 digits long (whitespace and/or dashes should be removed)",
+          "type": "string",
+          "examples": [
+            "832237"
+          ]
+        }
+      }
+    },
+    "subject": {
+      "$id": "#root/subject",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "$id": "#root/subject/name",
+          "description": "The subjects full name. This should include first and last names. Title is optional.",
+          "type": "string",
+          "examples": [
+            "Mr Joe Bloggs"
+          ]
+        }
+      }
+    }
+  }
+}

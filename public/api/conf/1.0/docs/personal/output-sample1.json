@@ -1,0 +1,10 @@
+{
+  "accountNumberIsWellFormatted": "yes",
+  "accountExists": "yes",
+  "nameMatches": "yes",
+  "nonStandardAccountDetailsRequiredForBacs": "no",
+  "sortCodeIsPresentOnEISCD": "yes",
+  "sortCodeSupportsDirectDebit": "yes",
+  "sortCodeSupportsDirectCredit": "yes",
+  "iban": "GB25NWBK60080600724890"
+}
