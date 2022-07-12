@@ -1,0 +1,2 @@
+GET        /api/definition                                  uk.gov.hmrc.bankaccountgateway.apiplatform.DocumentationController.definition()
+GET        /api/conf/:version/*file                         uk.gov.hmrc.bankaccountgateway.apiplatform.DocumentationController.raml(version, file)

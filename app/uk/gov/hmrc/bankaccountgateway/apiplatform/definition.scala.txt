@@ -1,0 +1,20 @@
+@import play.api.libs.json.Json
+@(status: String)
+{
+  "scopes": [],
+  "api": {
+    "name": "Bank Account",
+    "description": "Validation, verification and insights into Bank Accounts - provided by the Customer Insight Platform",
+    "context": "misc/bank-account",
+    "versions": [
+      {
+        "version": "1.0",
+        "status": "@status",
+        "access": {
+            "type": "PRIVATE"
+        },
+        "endpointsEnabled": @{status != "ALPHA"}
+      }
+    ]
+  }
+}

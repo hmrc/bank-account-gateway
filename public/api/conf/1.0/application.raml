@@ -1,0 +1,63 @@
+#%RAML 1.0
+---
+title: Bank Account
+version: 1.0
+
+protocols: [ HTTPS ]
+baseUri: https://api.service.hmrc.gov.uk/
+
+documentation:
+ - title: Overview
+   content: !include docs/overview.md
+ - title: Versioning
+   content: !include https://developer.service.hmrc.gov.uk/api-documentation/assets/common/docs/versioning.md
+ - title: Errors
+   content: !include https://developer.service.hmrc.gov.uk/api-documentation/assets/common/docs/errors.md
+
+mediaType: application/hal+json
+
+uses:
+  sec: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/securitySchemes.raml
+  headers: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/headers.raml
+  annotations: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/annotations.raml
+  types: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/types.raml
+  requiredHeaders: required-headers.raml
+
+/misc/bank-account:
+  /verify:
+    /personal:
+      post:
+        displayName: Verify personal bank account details
+        description: Check if the provided personal bank account details match a valid bank account
+        is:
+          - headers.acceptHeader
+          - requiredHeaders.userAgentHeader
+        securedBy: [ sec.x-application ]
+        body:
+          application/json:
+              type: !include docs/personal/personal-request.json
+              example: !include docs/personal/input-sample2.json
+        responses:
+          200:
+            body:
+              application/json:
+                type: !include docs/personal/personal-response.json
+                example: !include docs/personal/output-sample3.json
+    /business:
+      post:
+        displayName: Verify business bank account details
+        description: Check if the provided business bank account details match a valid bank account
+        is:
+          - headers.acceptHeader
+          - requiredHeaders.userAgentHeader
+        securedBy: [ sec.x-application ]
+        body:
+          application/json:
+              type: !include docs/business/business-request.json
+              example: !include docs/business/input-sample1.json
+        responses:
+          200:
+            body:
+              application/json:
+                type: !include docs/business/business-response.json
+                example: !include docs/business/output-sample1.json

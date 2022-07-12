@@ -1,0 +1,20 @@
+{
+  "account": {
+    "sortCode": "600920",
+    "accountNumber": "67037135"
+  },
+  "subject": {
+    "title": "Mr",
+    "name": "John Smith",
+    "dob": "1970-12-31",
+    "address": {
+      "lines": [
+        "Flat 1",
+        "12-15 A Street",
+        "Some Place"
+      ],
+      "town": "Any Town",
+      "postcode": "ZE99 1XZ"
+    }
+  }
+}
