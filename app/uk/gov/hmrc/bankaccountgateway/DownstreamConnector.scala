@@ -1,11 +1,27 @@
+/*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package uk.gov.hmrc.bankaccountgateway
 
+import play.api.http.HeaderNames._
 import play.api.http.{HttpEntity, MimeTypes}
 import play.api.libs.json.JsValue
+import play.api.mvc.Results.{BadGateway, InternalServerError, MethodNotAllowed}
 import play.api.mvc.{AnyContent, Request, ResponseHeader, Result}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
-import play.api.http.HeaderNames._
-import play.api.mvc.Results.{BadRequest, InternalServerError, MethodNotAllowed}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -30,7 +46,7 @@ class DownstreamConnector @Inject()(httpClient: HttpClient) {
                 ResponseHeader(response.status, returnHeaders),
                 HttpEntity.Streamed(response.bodyAsSource, None, response.header(CONTENT_TYPE)))
             }.recoverWith { case t: Throwable =>
-            Future.successful(BadRequest("{\"code\": \"REQUEST_DOWNSTREAM\", \"desc\": \"An issue occurred when the downstream service tried to handle the request\"}").as(MimeTypes.JSON))
+            Future.successful(BadGateway("{\"code\": \"REQUEST_DOWNSTREAM\", \"desc\": \"An issue occurred when the downstream service tried to handle the request\"}").as(MimeTypes.JSON))
           }
         } catch {
           case t: Throwable =>

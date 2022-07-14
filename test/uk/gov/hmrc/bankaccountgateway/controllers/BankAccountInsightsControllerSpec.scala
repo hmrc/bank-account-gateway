@@ -31,18 +31,17 @@ import play.api.test.Helpers._
 import play.core.server.{Server, ServerConfig}
 import uk.gov.hmrc.http.HeaderCarrier
 
-class BankAccountReputationControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
-
-  val barsPort = 11222
+class BankAccountInsightsControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
+  val insightsPort = 11222
 
   override lazy val app: Application = new GuiceApplicationBuilder()
-    .configure("microservice.services.bank-account-reputation.port" -> barsPort)
+    .configure("microservice.services.bank-account-insights.port" -> insightsPort)
     .build()
 
-  private val controller = app.injector.instanceOf[BankAccountReputationController]
+  private val controller = app.injector.instanceOf[BankAccountInsightsController]
   implicit val mat: Materializer = app.injector.instanceOf[Materializer]
 
-  "POST /verify/personal" should {
+  "POST /check/insights" should {
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
     "forward a 200 response from the downstream service" in {
@@ -57,16 +56,16 @@ class BankAccountReputationControllerSpec extends AnyWordSpec with Matchers with
                        |  "nonStandardAccountDetailsRequiredForBacs": "no"
                        |}""".stripMargin
 
-      Server.withRouterFromComponents(ServerConfig(port = Some(barsPort))) { components =>
+      Server.withRouterFromComponents(ServerConfig(port = Some(insightsPort))) { components =>
         import components.{defaultActionBuilder => Action}
         {
-          case r@SPOST(p"/bank-account-reputation/verify/personal") =>
+          case r@SPOST(p"/bank-account-insights/check/insights") =>
             r.headers.get("True-Calling-Client") shouldBe Some("example-service")
             Action(Ok(response).withHeaders("Content-Type" -> "application/json"))
         }
       } { _ =>
 
-        val fakeRequest = FakeRequest("POST", "/bank-account-gateway/verify/personal")
+        val fakeRequest = FakeRequest("POST", "/bank-account-gateway/check/insights")
           .withJsonBody(Json.parse("""{"account": {"accountNumber": "12345667", "sortCode": "123456"}, "subject": {"name": "Mr J Bloggs"}}"""))
           .withHeaders("True-Calling-Client" -> "example-service", "Content-Type" -> "application/json")
 
@@ -79,14 +78,14 @@ class BankAccountReputationControllerSpec extends AnyWordSpec with Matchers with
     "forward a 400 response from the downstream service" in {
       val errorResponse = """{"code": "MALFORMED_JSON", "path.missing: Subject"}""".stripMargin
 
-      Server.withRouterFromComponents(ServerConfig(port = Some(barsPort))) { components =>
+      Server.withRouterFromComponents(ServerConfig(port = Some(insightsPort))) { components =>
         import components.{defaultActionBuilder => Action}
         {
-          case r@SPOST(p"/bank-account-reputation/verify/personal") => Action(
+          case r@SPOST(p"/bank-account-insights/check/insights") => Action(
             BadRequest(errorResponse).withHeaders("Content-Type" -> "application/json"))
         }
       } { _ =>
-        val fakeRequest = FakeRequest("POST", "/bank-account-gateway/verify/personal")
+        val fakeRequest = FakeRequest("POST", "/bank-account-gateway/check/insights")
           .withJsonBody(Json.parse("""{"account": {"accountNumber": "12345667", "sortCode": "123456"}}"""))
           .withHeaders("True-Calling-Client" -> "example-service", "Content-Type" -> "application/json")
 
@@ -99,14 +98,14 @@ class BankAccountReputationControllerSpec extends AnyWordSpec with Matchers with
     "handle a malformed json payload" in {
       val errorResponse = """{"code": "MALFORMED_JSON", "path.missing: Subject"}""".stripMargin
 
-      Server.withRouterFromComponents(ServerConfig(port = Some(barsPort))) { components =>
+      Server.withRouterFromComponents(ServerConfig(port = Some(insightsPort))) { components =>
         import components.{defaultActionBuilder => Action}
         {
-          case r@SPOST(p"/bank-account-reputation/verify/personal") => Action(
+          case r@SPOST(p"/bank-account-insights/check/insights") => Action(
             BadRequest(errorResponse).withHeaders("Content-Type" -> "application/json"))
         }
       } { _ =>
-        val fakeRequest = FakeRequest("POST", "/bank-account-gateway/verify/personal")
+        val fakeRequest = FakeRequest("POST", "/bank-account-gateway/check/insights")
           .withTextBody("""{"account": {""")
           .withHeaders("True-Calling-Client" -> "example-service", "Content-Type" -> "application/json")
 
@@ -119,7 +118,7 @@ class BankAccountReputationControllerSpec extends AnyWordSpec with Matchers with
     "return bad gateway if there is no connectivity to the downstream service" in {
       val errorResponse = """{"code": "REQUEST_DOWNSTREAM", "desc": "An issue occurred when the downstream service tried to handle the request"}""".stripMargin
 
-      val fakeRequest = FakeRequest("POST", "/bank-account-gateway/verify/personal")
+      val fakeRequest = FakeRequest("POST", "/bank-account-gateway/check/insights")
         .withJsonBody(Json.parse("""{"account": {"accountNumber": "12345667", "sortCode": "123456"}}"""))
         .withHeaders("True-Calling-Client" -> "example-service", "Content-Type" -> "application/json")
 
