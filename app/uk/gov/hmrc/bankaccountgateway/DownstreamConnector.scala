@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.bankaccountgateway
 
+import play.api.Logger
 import play.api.http.HeaderNames._
 import play.api.http.{HttpEntity, MimeTypes}
 import play.api.libs.json.JsValue
@@ -28,8 +29,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DownstreamConnector @Inject()(httpClient: HttpClient) {
+  private val logger = Logger(this.getClass.getSimpleName)
+
   def forward(request: Request[AnyContent], url: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
+
+    logger.info(s"Forwarding to downstream url: $url")
 
     (request.method, request.headers(CONTENT_TYPE).toLowerCase()) match {
       case ("POST", "application/json") =>
