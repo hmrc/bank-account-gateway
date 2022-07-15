@@ -1,0 +1,29 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "items": {
+        "properties": {
+            "bankAccountInsightsCorrelationId": {
+                "type": "string",
+                "length": 36
+            },
+            "riskScore": {
+                "description": "Risk score",
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+            },
+            "reason": {
+                "description": "Reason for risk score",
+                "type": "string",
+                "minimum": 0,
+                "maximum": 256
+            }
+        },
+        "required": [
+            "bankAccountInsightsCorrelationId",
+            "riskScore",
+            "reason"
+        ]
+    }
+}

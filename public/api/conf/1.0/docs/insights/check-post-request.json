@@ -1,0 +1,31 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/object1614266033.json",
+  "title": "Root",
+  "type": "object",
+  "required": [
+    "sortCode",
+    "accountNumber"
+  ],
+  "properties": {
+    "sortCode": {
+      "$id": "#root/sortCode",
+      "title": "Sort Code",
+      "description": "The sort code for the bank account",
+      "type": "string",
+      "examples": [
+        "123456"
+      ]
+    },
+    "accountNumber": {
+      "$id": "#root/accountNumber",
+      "title": "Account Number",
+      "description": "Account number for the bank account",
+      "type": "string",
+      "examples": [
+        "12345678"
+      ]
+    }
+  }
+}

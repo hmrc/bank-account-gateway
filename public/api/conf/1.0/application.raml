@@ -24,6 +24,24 @@ uses:
   requiredHeaders: required-headers.raml
 
 /misc/bank-account:
+  /check:
+    /insights:
+      post:
+        displayName: Bank account insights
+        description: |
+          Get insights about a bank account
+        is: [headers.acceptHeader]
+        securedBy: [ sec.x-application ]
+        body:
+          application/json:
+              type: !include docs/insights/check-post-request.json
+              example: !include docs/insights/example-check-post-request.json
+        responses:
+          200:
+            body:
+              application/json:
+                type: !include docs/insights/check-response.json
+                example: !include docs/insights/example-check-response.json
   /verify:
     /personal:
       post:
