@@ -38,13 +38,13 @@ class DownstreamConnector @Inject()(httpClient: HttpClient) {
 
     (request.method, request.headers(CONTENT_TYPE).toLowerCase()) match {
       case ("POST", "application/json") =>
-        val onwardHeaders = request.headers.remove(CONTENT_LENGTH).headers
+        val onwardHeaders = request.headers.remove(CONTENT_LENGTH, HOST).headers
 
         try {
           httpClient.POST[Option[JsValue], HttpResponse](url = url, body = request.body.asJson, onwardHeaders)
             .map { response: HttpResponse =>
               val returnHeaders = response.headers
-                .filterNot { case (n, _) => n == CONTENT_TYPE || n == CONTENT_LENGTH }
+                .filterNot { case (n, _) => n == CONTENT_TYPE || n == CONTENT_LENGTH}
                 .mapValues(x => x.mkString)
 
               Result(
