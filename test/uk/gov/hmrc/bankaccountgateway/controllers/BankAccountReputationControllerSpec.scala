@@ -68,7 +68,7 @@ class BankAccountReputationControllerSpec extends AnyWordSpec with Matchers with
 
         val fakeRequest = FakeRequest("POST", "/bank-account-gateway/verify/personal")
           .withJsonBody(Json.parse("""{"account": {"accountNumber": "12345667", "sortCode": "123456"}, "subject": {"name": "Mr J Bloggs"}}"""))
-          .withHeaders("True-Calling-Client" -> "example-service", "Content-Type" -> "application/json")
+          .withHeaders("True-Calling-Client" -> "example-service", "Content-Type" -> "application/json", "Authorization" -> "abc")
 
         val result = controller.any()(fakeRequest)
         status(result) shouldBe Status.OK
