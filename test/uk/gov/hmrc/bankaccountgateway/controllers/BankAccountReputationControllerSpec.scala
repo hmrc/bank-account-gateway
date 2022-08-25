@@ -62,6 +62,7 @@ class BankAccountReputationControllerSpec extends AnyWordSpec with Matchers with
         {
           case r@SPOST(p"/bank-account-reputation/verify/personal") =>
             r.headers.get("True-Calling-Client") shouldBe Some("example-service")
+            r.headers.get(AUTHORIZATION) shouldBe None
             Action(Ok(response).withHeaders("Content-Type" -> "application/json"))
         }
       } { _ =>
