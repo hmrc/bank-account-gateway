@@ -17,21 +17,26 @@
 package uk.gov.hmrc.bankaccountgateway.controllers
 
 import play.api.mvc._
-import uk.gov.hmrc.bankaccountgateway.DownstreamConnector
+import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
+import uk.gov.hmrc.auth.core.{AuthConnector, AuthProviders}
 import uk.gov.hmrc.bankaccountgateway.config.AppConfig
+import uk.gov.hmrc.bankaccountgateway.{DownstreamConnector, ToggledAuthorisedFunctions}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton()
-class BankAccountInsightsController @Inject()(cc: ControllerComponents, config: AppConfig, connector: DownstreamConnector)
-  extends BackendController(cc) {
+class BankAccountInsightsController @Inject()(cc: ControllerComponents, config: AppConfig, connector: DownstreamConnector, val authConnector: AuthConnector)
+  extends BackendController(cc) with ToggledAuthorisedFunctions {
 
   def any(): Action[AnyContent] = Action.async { implicit request =>
-    val path = request.target.uri.toString.replace("bank-account-gateway", "bank-account-insights")
-    val url = s"${config.insightsBaseUrl}$path"
+    toggledAuthorised(config.rejectInternalTraffic, AuthProviders(PrivilegedApplication)) {
+      val path = request.target.uri.toString.replace("bank-account-gateway", "bank-account-insights")
+      val url = s"${config.insightsBaseUrl}$path"
 
-    connector.forward(request, url)
+      connector.forward(request, url)
+    }
   }
+
 }
