@@ -1,8 +1,4 @@
-Bank Account API (Customer Insight Platform)
-============================================================
-
-Bank Account Insights
----------------------
+### Bank Account Insights
 
 Given a request of the following form
 
@@ -28,13 +24,12 @@ the API may provide a response of the following form
 * `reason`        - The reason for the score. `ACCOUNT_ON_WATCH_LIST` indicates the bank account in question was found on a watch list, `ACCOUNT_NOT_ON_WATCH_LIST` indicates it was not found on any watch list
 
 
-### Response status codes
+#### Response status codes
 * **200** - The request was serviced
 * **400** - The request payload was not valid
 
 
-Bank Account Verification
--------------------------
+### Bank Account Verification
 
 This API enables your application to verify that a personal or business bank account exists.
 Given an account number, sortcode and account name the response will indicate whether:
