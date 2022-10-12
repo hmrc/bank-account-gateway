@@ -61,6 +61,7 @@ class BankAccountInsightsControllerSpec extends AnyWordSpec with Matchers with G
         {
           case r@SPOST(p"/bank-account-insights/check/insights") =>
             r.headers.get("True-Calling-Client") shouldBe Some("example-service")
+            r.headers.get("Authorization") shouldBe Some("1234")
             Action(Ok(response).withHeaders("Content-Type" -> "application/json"))
         }
       } { _ =>

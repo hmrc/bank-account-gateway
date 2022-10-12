@@ -24,6 +24,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig, val environment: Environment) {
   val appName: String = config.get[String]("appName")
   val rejectInternalTraffic: Boolean = config.getOptional[Boolean]("microservice.rejectInternalTraffic").getOrElse(false)
+  val internalAuthToken: String = config.get[String]("microservice.services.internal-auth.token")
   val barsBaseUrl: String = servicesConfig.baseUrl("bank-account-reputation")
   val insightsBaseUrl: String = servicesConfig.baseUrl("bank-account-insights")
 }
