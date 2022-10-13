@@ -35,7 +35,7 @@ class BankAccountInsightsController @Inject()(cc: ControllerComponents, config: 
       val path = request.target.uri.toString.replace("bank-account-gateway", "bank-account-insights")
       val url = s"${config.insightsBaseUrl}$path"
 
-      connector.forward(request, url)
+      connector.forward(request, url, config.internalAuthToken)
     }
   }
 

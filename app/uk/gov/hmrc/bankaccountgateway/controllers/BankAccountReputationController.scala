@@ -35,7 +35,7 @@ class BankAccountReputationController @Inject()(cc: ControllerComponents, config
       val path = request.target.uri.toString.replace("bank-account-gateway", "bank-account-reputation")
       val url = s"${config.barsBaseUrl}$path"
 
-      connector.forward(request, url)
+      connector.forward(request, url, config.internalAuthToken)
     }
   }
 
