@@ -1,33 +1,12 @@
 ### Bank Account Insights
 
-Given a request of the following form
+This API enables your application to get an opinion of the riskiness of a sortcode and bank account combination. 
 
-```json
-{
-  "sortCode": "123456",
-  "accountNumber": "12345678"
-}
-```
+Given a sort code and account number, the response will provide:
 
-the API may provide a response of the following form
-
-```json
-{
-    "bankAccountInsightsCorrelationId": "ab8514f3-0f3c-4823-aba6-58f2222c33f1",
-    "riskScore": 100,
-    "reason": "ACCOUNT_ON_WATCH_LIST"
-}
-```
-
-* `bankAccountInsightsCorrelationId` - A unique `UUID` to allow the request/response to be tracked
-* `riskScore`     - A score indicating the _riskiness_ of the bank account in question. `0` indicates low risk and `100` indicate high risk
-* `reason`        - The reason for the score. `ACCOUNT_ON_WATCH_LIST` indicates the bank account in question was found on a watch list, `ACCOUNT_NOT_ON_WATCH_LIST` indicates it was not found on any watch list
-
-
-#### Response status codes
-* **200** - The request was serviced
-* **400** - The request payload was not valid
-
+* Risk score from 0 (no risk) to 100 (high risk)
+* Reason providing an indication of why the risk score has been allocated
+* Correlation Id - so you can reference the transaction in any feedback
 
 ### Bank Account Verification
 
