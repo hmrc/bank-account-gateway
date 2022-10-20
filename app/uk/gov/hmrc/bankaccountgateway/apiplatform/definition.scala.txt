@@ -6,6 +6,7 @@
     "name": "Bank Account",
     "description": "Validation, verification and insights into Bank Accounts - provided by the Customer Insight Platform",
     "context": "misc/bank-account",
+    "categories": ["PRIVATE_GOVERNMENT"],
     "versions": [
       {
         "version": "1.0",

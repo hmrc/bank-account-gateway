@@ -4,6 +4,7 @@
     "items": {
         "properties": {
             "bankAccountInsightsCorrelationId": {
+                "description": "A unique `UUID` to allow the request/response to be tracked",
                 "type": "string",
                 "length": 36
             },
