@@ -19,7 +19,7 @@ package uk.gov.hmrc.bankaccountgateway
 import play.api.Logger
 import play.api.http.HeaderNames._
 import play.api.http.{HttpEntity, MimeTypes}
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Results.{BadGateway, InternalServerError, MethodNotAllowed}
 import play.api.mvc.{AnyContent, Request, ResponseHeader, Result}
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpClient, HttpResponse}
@@ -45,7 +45,7 @@ class DownstreamConnector @Inject()(httpClient: HttpClient) {
           httpClient.POST[Option[JsValue], HttpResponse](url = url, body = request.body.asJson, onwardHeaders)
             .map { response: HttpResponse =>
               val returnHeaders = response.headers
-                .filterNot { case (n, _) => n == CONTENT_TYPE || n == CONTENT_LENGTH}
+                .filterNot { case (n, _) => n == CONTENT_TYPE || n == CONTENT_LENGTH }
                 .mapValues(x => x.mkString)
 
               Result(
@@ -61,6 +61,24 @@ class DownstreamConnector @Inject()(httpClient: HttpClient) {
 
       case _ =>
         Future.successful(MethodNotAllowed("{\"code\": \"UNSUPPORTED_METHOD\", \"desc\": \"Unsupported HTTP method or content-type\"}").as(MimeTypes.JSON))
+    }
+  }
+
+  def checkConnectivity(url: String, authToken: String)(implicit ec: ExecutionContext): Future[Boolean] = {
+    import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
+    implicit val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization(authToken)))
+
+    try {
+      httpClient.POST[Option[JsValue], HttpResponse](url = url, body = Some(Json.parse("{}"))).map {
+        case response if response.status > 400 => false
+        case response if response.status / 100 == 5 => false
+        case _ => true
+      }.recoverWith { case t: Throwable =>
+        Future.successful(false)
+      }
+    }
+    catch {
+      case t: Throwable => Future.successful(false)
     }
   }
 }

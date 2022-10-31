@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.bankaccountgateway.controllers
 
+import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthProvider.StandardApplication
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthProviders}
@@ -30,6 +31,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class BankAccountInsightsController @Inject()(cc: ControllerComponents, config: AppConfig, connector: DownstreamConnector, val authConnector: AuthConnector)
   extends BackendController(cc) with ToggledAuthorisedFunctions {
 
+  private val logger = Logger(this.getClass.getSimpleName)
+
   def any(): Action[AnyContent] = Action.async { implicit request =>
     toggledAuthorised(config.rejectInternalTraffic, AuthProviders(StandardApplication)) {
       val path = request.target.uri.toString.replace("bank-account-gateway", "bank-account-insights")
@@ -39,4 +42,17 @@ class BankAccountInsightsController @Inject()(cc: ControllerComponents, config: 
     }
   }
 
+  def checkConnectivity(): Unit = {
+    val url = s"${config.insightsBaseUrl}/check/insights"
+    connector.checkConnectivity(url, config.internalAuthToken).map {
+      result =>
+        if (result) {
+          logger.info("Connectivity to bank-account-insights established")
+        } else {
+          logger.error("ERROR: Could not connect to bank-account-insights")
+        }
+    }
+  }
+
+  checkConnectivity()
 }
