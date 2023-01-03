@@ -21,7 +21,6 @@ import play.api.Configuration
 import play.api.http.{ContentTypes, MimeTypes}
 import play.api.mvc.{Action, AnyContent, Codec, ControllerComponents}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
-import views.txt
 
 import javax.inject.Inject
 import scala.concurrent.Future
