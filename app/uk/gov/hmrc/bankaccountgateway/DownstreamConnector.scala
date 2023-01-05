@@ -46,7 +46,7 @@ class DownstreamConnector @Inject()(httpClient: HttpClient) {
             .map { response: HttpResponse =>
               val returnHeaders = response.headers
                 .filterNot { case (n, _) => n == CONTENT_TYPE || n == CONTENT_LENGTH }
-                .mapValues(x => x.mkString)
+                .view.mapValues(x => x.mkString).toMap
 
               Result(
                 ResponseHeader(response.status, returnHeaders),

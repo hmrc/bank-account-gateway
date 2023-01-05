@@ -24,10 +24,10 @@ import uk.gov.hmrc.bankaccountgateway.{DownstreamConnector, ToggledAuthorisedFun
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext
 
 @Singleton()
-class BankAccountReputationController @Inject()(cc: ControllerComponents, config: AppConfig, connector: DownstreamConnector, val authConnector: AuthConnector)
+class BankAccountReputationController @Inject()(cc: ControllerComponents, config: AppConfig, connector: DownstreamConnector, val authConnector: AuthConnector)(implicit ec: ExecutionContext)
   extends BackendController(cc) with ToggledAuthorisedFunctions {
 
   def any(): Action[AnyContent] = Action.async { implicit request =>
@@ -38,5 +38,4 @@ class BankAccountReputationController @Inject()(cc: ControllerComponents, config
       connector.forward(request, url, config.internalAuthToken)
     }
   }
-
 }
