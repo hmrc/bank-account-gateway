@@ -40,6 +40,7 @@
     "subject": {
       "$id": "#root/subject",
       "type": "object",
+      "description": "Subject",
       "required": [
         "name"
       ],

@@ -1,0 +1,156 @@
+openapi: 3.0.0
+info:
+  title: Bank Account
+  contact: {}
+  version: '1.0'
+  description:
+    $ref: 'docs/overview.md'
+servers:
+  - url: https://test-api.service.hmrc.gov.uk/misc/bank-account
+    description: Sandbox
+  - url: https://api.service.hmrc.gov.uk/test/misc/bank-account
+    description: Production
+paths:
+  /check/insights:
+    post:
+      summary: Check bank account insights
+      description: >
+        Get insights about a bank account
+      operationId: Bankaccountinsights
+      security:
+        - applicationRestricted: [ ]
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MiscBankAccountCheckInsightsRequest'
+            example:
+              sortCode: '123456'
+              accountNumber: '12345678'
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MiscBankAccountCheckInsightsResponse'
+                description: ''
+      deprecated: false
+  /verify/personal:
+    post:
+      summary: Verify personal bank account details
+      description: Check if the provided personal bank account details match a valid bank account
+      operationId: Verifypersonalbankaccountdetails
+      security:
+        - applicationRestricted: [ ]
+      parameters:
+        - name: User-Agent
+          in: header
+          description: Calling service identifier
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: calling-service
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: 'docs/personal/personal-request.json'
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: 'docs/personal/personal-response.json'
+      deprecated: false
+  /verify/business:
+    post:
+      summary: Verify business bank account details
+      description: Check if the provided business bank account details match a valid bank account
+      operationId: Verifybusinessbankaccountdetails
+      security:
+        - applicationRestricted: [ ]
+      parameters:
+        - name: User-Agent
+          in: header
+          description: Calling service identifier
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: calling-service
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: 'docs/business/business-request.json'
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: 'docs/business/business-response.json'
+      deprecated: false
+components:
+  securitySchemes:
+    applicationRestricted:
+      type: oauth2
+      description: |
+        HMRC supports OAuth 2.0 for authenticating application restricted API requests using an OAuth 2.0 Bearer Token in the AUTHORIZATION header.
+        See https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints for details.
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
+          scopes: { }
+  schemas:
+    MiscBankAccountCheckInsightsResponse:
+      title: MiscBankAccountCheckInsightsResponse
+      required:
+        - bankAccountInsightsCorrelationId
+        - riskScore
+        - reason
+      type: object
+      properties:
+        bankAccountInsightsCorrelationId:
+          type: string
+          description: A unique `UUID` to allow the request/response to be tracked
+        riskScore:
+          maximum: 100
+          minimum: 0
+          type: number
+          description: Risk score
+        reason:
+          type: string
+          description: Reason for risk score
+    MiscBankAccountCheckInsightsRequest:
+      title: MiscBankAccountCheckInsightsRequest
+      required:
+        - sortCode
+        - accountNumber
+      type: object
+      properties:
+        sortCode:
+          maxLength: 6
+          minLength: 6
+          type: string
+          description: The sort code for the bank account
+        accountNumber:
+          maxLength: 8
+          minLength: 8
+          type: string
+          description: Account number for the bank account (Account numbers with a length less than 8 digits should be prefixed with zeros to pad it up to 8 digits, e.g. 00123456)

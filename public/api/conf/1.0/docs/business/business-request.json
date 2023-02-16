@@ -11,7 +11,7 @@
   "properties": {
     "account": {
       "$id": "#root/account",
-      "title": "Account",
+      "description": "Account",
       "type": "object",
       "required": [
         "accountNumber",
@@ -42,7 +42,7 @@
   ,
     "business": {
       "$id": "#root/business",
-      "title": "Business",
+      "description": "Business",
       "type": "object",
       "required": [
         "companyName"
