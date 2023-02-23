@@ -8,7 +8,7 @@ info:
 servers:
   - url: https://test-api.service.hmrc.gov.uk/misc/bank-account
     description: Sandbox
-  - url: https://api.service.hmrc.gov.uk/test/misc/bank-account
+  - url: https://api.service.hmrc.gov.uk/misc/bank-account
     description: Production
 paths:
   /check/insights:
