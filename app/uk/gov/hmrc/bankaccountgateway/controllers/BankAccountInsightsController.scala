@@ -35,7 +35,7 @@ class BankAccountInsightsController @Inject()(cc: ControllerComponents, config: 
 
   def any(): Action[AnyContent] = Action.async { implicit request =>
     toggledAuthorised(config.rejectInternalTraffic, AuthProviders(StandardApplication)) {
-      val path = request.target.uri.toString.replace("bank-account-gateway", "bank-account-insights")
+      val path = request.target.uri.toString.replace("bank-account-gateway", "bank-account-insights-proxy")
       val url = s"${config.insightsBaseUrl}$path"
 
       connector.forward(request, url, config.internalAuthToken)
