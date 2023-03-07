@@ -59,7 +59,7 @@ class BankAccountInsightsControllerSpec extends AnyWordSpec with Matchers with G
       Server.withRouterFromComponents(ServerConfig(port = Some(insightsPort))) { components =>
         import components.{defaultActionBuilder => Action}
         {
-          case r@SPOST(p"/bank-account-insights/check/insights") =>
+          case r@SPOST(p"/bank-account-insights-proxy/check/insights") =>
             r.headers.get("True-Calling-Client") shouldBe Some("example-service")
             r.headers.get("Authorization") shouldBe Some("1234")
             Action(Ok(response).withHeaders("Content-Type" -> "application/json"))
@@ -82,7 +82,7 @@ class BankAccountInsightsControllerSpec extends AnyWordSpec with Matchers with G
       Server.withRouterFromComponents(ServerConfig(port = Some(insightsPort))) { components =>
         import components.{defaultActionBuilder => Action}
         {
-          case r@SPOST(p"/bank-account-insights/check/insights") => Action(
+          case r@SPOST(p"/bank-account-insights-proxy/check/insights") => Action(
             BadRequest(errorResponse).withHeaders("Content-Type" -> "application/json"))
         }
       } { _ =>
@@ -102,7 +102,7 @@ class BankAccountInsightsControllerSpec extends AnyWordSpec with Matchers with G
       Server.withRouterFromComponents(ServerConfig(port = Some(insightsPort))) { components =>
         import components.{defaultActionBuilder => Action}
         {
-          case r@SPOST(p"/bank-account-insights/check/insights") => Action(
+          case r@SPOST(p"/bank-account-insights-proxy/check/insights") => Action(
             BadRequest(errorResponse).withHeaders("Content-Type" -> "application/json"))
         }
       } { _ =>
