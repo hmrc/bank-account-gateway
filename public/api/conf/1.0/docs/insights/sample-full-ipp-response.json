@@ -1,0 +1,40 @@
+{
+  "risk": {
+    "bankAccountInsightsCorrelationId": "c33b596c-2cdd-4bf7-a20c-8efd1b32802f",
+    "riskScore": 0,
+    "reason": "ACCOUNT_NOT_ON_WATCH_LIST"
+  },
+  "ipp": {
+    "sortCode": "602479",
+    "accountNumber": "19161204",
+    "correlationId": "1ae7da0d-a77b-49ff-835c-99a14c73e23f",
+    "ippComponents": [
+      {
+        "identifier": "PayeReference",
+        "count": 1018,
+        "componentValues": [
+          {
+            "value": "968/HIHJKAO",
+            "numOfOccurrences": 1,
+            "lastSeen": "2023-03-13T09:27:13.395"
+          },
+          {
+            "value": "342/GVJFZPQ",
+            "numOfOccurrences": 1,
+            "lastSeen": "2023-03-13T08:00:02.895"
+          },
+          {
+            "value": "933/XZI1B6T",
+            "numOfOccurrences": 1,
+            "lastSeen": "2023-01-10T09:25:06.222"
+          },
+          {
+            "value": "865/Q4UWWLY",
+            "numOfOccurrences": 1,
+            "lastSeen": "2022-12-30T09:26:31.039"
+          }
+        ]
+      }
+    ]
+  }
+}
