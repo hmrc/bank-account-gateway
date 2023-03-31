@@ -1,18 +1,17 @@
 {
-  "risk": {
-    "bankAccountInsightsCorrelationId": "c33b596c-2cdd-4bf7-a20c-8efd1b32802f",
-    "riskScore": 0,
-    "reason": "ACCOUNT_NOT_ON_WATCH_LIST"
-  },
-  "ipp": {
-    "sortCode": "602479",
-    "accountNumber": "19161204",
-    "correlationId": "1ae7da0d-a77b-49ff-835c-99a14c73e23f",
-    "ippComponents": [
+  "sortCode": "602479",
+  "accountNumber": "19161204",
+  "correlationId": "1ae7da0d-a77b-49ff-835c-99a14c73e23f",
+  "insights": {
+    "risk": {
+      "riskScore": 0,
+      "reason": "ACCOUNT_NOT_ON_WATCH_LIST"
+    },
+    "relationships": [
       {
-        "identifier": "PayeReference",
+        "attribute": "PayeReference",
         "count": 1018,
-        "componentValues": [
+        "attributeValues": [
           {
             "value": "968/HIHJKAO",
             "numOfOccurrences": 1,
