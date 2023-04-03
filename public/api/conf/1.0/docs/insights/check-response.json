@@ -1,30 +1,132 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "type": "object",
-    "items": {
-        "properties": {
-            "bankAccountInsightsCorrelationId": {
-                "description": "A unique `UUID` to allow the request/response to be tracked",
-                "type": "string",
-                "length": 36
-            },
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Root",
+  "type": "object",
+  "required": [
+    "sortCode",
+    "accountNumber",
+    "correlationId",
+    "insights"
+  ],
+  "properties": {
+    "sortCode": {
+      "$id": "#root/sortCode",
+      "title": "Sort Code",
+      "description": "The sort code for that bank account to be checked",
+      "type": "string",
+      "minLength": 6,
+      "maxLength": 6
+    },
+    "accountNumber": {
+      "$id": "#root/accountNumber",
+      "title": "Account Number",
+      "description": "The account number for the bank account to be checked",
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 8
+    },
+    "correlationId": {
+      "$id": "#root/correlationId",
+      "title": "Correlation Id",
+      "description": "A unique `UUID` to allow the request/response to be tracked",
+      "type": "string",
+      "length": 36
+    },
+    "insights": {
+      "$id": "#root/insights",
+      "title": "Related attributes",
+      "description": "Attributes that might be related to the bank account",
+      "type": "object",
+      "properties": {
+        "risk": {
+          "$id": "#root/relationships",
+          "title": "Related attributes",
+          "description": "Attributes that might be related to the bank account",
+          "type": "object",
+          "properties": {
             "riskScore": {
-                "description": "Risk score",
-                "type": "number",
-                "minimum": 0,
-                "maximum": 100
+              "$id": "#root/insights/risk/riskScore",
+              "title": "Risk score",
+              "description": "Risk score",
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
             },
             "reason": {
-                "description": "Reason for risk score",
-                "type": "string",
-                "minimum": 0,
-                "maximum": 256
+              "$id": "#root/insights/risk/reason",
+              "title": "Reason for risk score",
+              "description": "Reason for risk score",
+              "type": "string",
+              "minimum": 0,
+              "maximum": 256
             }
+          }
         },
-        "required": [
-            "bankAccountInsightsCorrelationId",
-            "riskScore",
-            "reason"
-        ]
+        "relationships": {
+          "$id": "#root/insights/relationships",
+          "title": "Related attributes",
+          "description": "Attributes that might be related to the bank account",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "uniqueItems": true,
+            "properties": {
+              "attribute": {
+                "$id": "#root/insights/relationships/attribute",
+                "title": "Related attribute",
+                "description": "The type of related attribute",
+                "type": "string"
+              },
+              "count": {
+                "$id": "#root/insights/relationships/count",
+                "title": "Number of occurrences",
+                "description": "The number of times this type of attribute occurs to be related to the bank account",
+                "type": "integer"
+              },
+              "attributeValues": {
+                "$id": "#root/insights/relationships/attributeValues",
+                "title": "Attribute Value",
+                "description": "The particular value of the attribute that is related to the bank account",
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "$id": "#root/insights/relationships/attributeValues/value",
+                      "title": "A particular value of the related attribute",
+                      "description": "The exact value of the attribute",
+                      "type": "string"
+                    },
+                    "numOfOccurrences": {
+                      "$id": "#root/insights/relationships/attributeValues/numOfOccurrences",
+                      "title": "The number of times this value of the related attribute occurred in relation to the bank account",
+                      "description": "The number of times this particular value of the related attribute occurred in the relationship",
+                      "type": "integer"
+                    },
+                    "lastSeen": {
+                      "$id": "#root/insights/relationships/attributeValues/lastSeen",
+                      "title": "The last time this attribute value was seen in relation to the bank account",
+                      "description": "The most recent time when this value was observed in this relationship",
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "required": [
+                    "value",
+                    "numOfOccurrences",
+                    "lastSeen"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "attribute",
+              "count"
+            ]
+          }
+        }
+      }
     }
+  }
 }
