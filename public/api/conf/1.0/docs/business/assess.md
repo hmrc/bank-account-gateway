@@ -26,7 +26,7 @@ For more details see [Interpreting the response](#interpreting-the-response).
 ### URL and Method
 URL: `/verify/business`
 
-Method: `POST`
+Method: `POST` 
 
 ### Request message body
 A JSON message equivalent to the following Scala `Input` case class and its associates:
