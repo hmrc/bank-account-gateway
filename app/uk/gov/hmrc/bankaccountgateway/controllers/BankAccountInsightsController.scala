@@ -18,7 +18,7 @@ package uk.gov.hmrc.bankaccountgateway.controllers
 
 import play.api.Logger
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.AuthProvider.StandardApplication
+import uk.gov.hmrc.auth.core.AuthProvider.{PrivilegedApplication, StandardApplication}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthProviders}
 import uk.gov.hmrc.bankaccountgateway.config.AppConfig
 import uk.gov.hmrc.bankaccountgateway.{DownstreamConnector, ToggledAuthorisedFunctions}
@@ -34,7 +34,7 @@ class BankAccountInsightsController @Inject()(cc: ControllerComponents, config: 
   private val logger = Logger(this.getClass.getSimpleName)
 
   def any(): Action[AnyContent] = Action.async { implicit request =>
-    toggledAuthorised(config.rejectInternalTraffic, AuthProviders(StandardApplication)) {
+    toggledAuthorised(config.rejectInternalTraffic, AuthProviders(StandardApplication, PrivilegedApplication)) {
       val path = request.target.uri.toString.replace("bank-account-gateway", "bank-account-insights-proxy")
       val url = s"${config.insightsBaseUrl}$path"
 
