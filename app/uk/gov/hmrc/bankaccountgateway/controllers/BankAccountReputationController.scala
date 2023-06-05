@@ -17,7 +17,7 @@
 package uk.gov.hmrc.bankaccountgateway.controllers
 
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.AuthProvider.StandardApplication
+import uk.gov.hmrc.auth.core.AuthProvider.{PrivilegedApplication, StandardApplication}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthProviders}
 import uk.gov.hmrc.bankaccountgateway.config.AppConfig
 import uk.gov.hmrc.bankaccountgateway.{DownstreamConnector, ToggledAuthorisedFunctions}
@@ -31,7 +31,7 @@ class BankAccountReputationController @Inject()(cc: ControllerComponents, config
   extends BackendController(cc) with ToggledAuthorisedFunctions {
 
   def any(): Action[AnyContent] = Action.async { implicit request =>
-    toggledAuthorised(config.rejectInternalTraffic, AuthProviders(StandardApplication)) {
+    toggledAuthorised(config.rejectInternalTraffic, AuthProviders(StandardApplication, PrivilegedApplication)) {
       val path = request.target.uri.toString.replace("bank-account-gateway", "bank-account-reputation")
       val url = s"${config.barsBaseUrl}$path"
 
