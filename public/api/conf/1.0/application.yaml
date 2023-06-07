@@ -3,8 +3,6 @@ info:
   title: Bank Account
   contact: {}
   version: '1.0'
-  description:
-    $ref: 'docs/overview.md'
 servers:
   - url: https://test-api.service.hmrc.gov.uk/misc/bank-account
     description: Sandbox
