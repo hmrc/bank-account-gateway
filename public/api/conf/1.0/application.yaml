@@ -11,7 +11,7 @@ servers:
 paths:
   /check/insights:
     post:
-      summary: Check bank account insights
+      summary: Bank account insights
       description: >
         Get insights about a bank account
       operationId: Bankaccountinsights
