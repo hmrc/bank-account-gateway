@@ -35,7 +35,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
+                type: object
                 items:
                   $ref: '#/components/schemas/MiscBankAccountCheckInsightsResponse'
                 description: ''
@@ -123,7 +123,6 @@ components:
         - accountNumber
         - correlationId
         - insights
-        - relationships
       type: object
       properties:
         sortCode:
