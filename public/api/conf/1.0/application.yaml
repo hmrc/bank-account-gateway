@@ -30,15 +30,12 @@ paths:
         required: true
       responses:
         '200':
-          description: ''
+          description: 'Bank account insights'
           headers: {}
           content:
             application/json:
               schema:
-                type: object
-                items:
-                  $ref: '#/components/schemas/MiscBankAccountCheckInsightsResponse'
-                description: ''
+                $ref: '#/components/schemas/MiscBankAccountCheckInsightsResponse'
       deprecated: false
   /verify/personal:
     post:
@@ -57,7 +54,7 @@ paths:
             type: string
             example: calling-service
       requestBody:
-        description: ''
+        description: 'Personal verify request'
         content:
           application/json:
             schema:
@@ -65,7 +62,7 @@ paths:
         required: true
       responses:
         '200':
-          description: ''
+          description: 'Personal verify response'
           headers: {}
           content:
             application/json:
@@ -89,7 +86,7 @@ paths:
             type: string
             example: calling-service
       requestBody:
-        description: ''
+        description: 'Business verify request'
         content:
           application/json:
             schema:
@@ -97,7 +94,7 @@ paths:
         required: true
       responses:
         '200':
-          description: ''
+          description: 'Business verify response'
           headers: {}
           content:
             application/json:

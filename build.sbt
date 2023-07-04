@@ -1,5 +1,4 @@
 import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 val appName = "bank-account-gateway"
 
@@ -20,6 +19,7 @@ lazy val microservice = Project(appName, file("."))
     )
     // ***************
   )
+  .settings(PlayKeys.playDefaultPort := 8345)
   .configs(IntegrationTest)
   .settings(integrationTestSettings(): _*)
   .settings(resolvers += Resolver.jcenterRepo)
