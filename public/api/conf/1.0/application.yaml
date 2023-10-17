@@ -1,8 +1,10 @@
 openapi: 3.0.0
 info:
   title: Bank Account
-  contact: {}
   version: '1.0'
+  contact:
+    name: CIP Insights & Reputation Team
+    email: cip-insights-and-reputation-g@digital.hmrc.gov.uk
 servers:
   - url: https://test-api.service.hmrc.gov.uk/misc/bank-account
     description: Sandbox
@@ -36,6 +38,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MiscBankAccountCheckInsightsResponse'
+              example:
+                sortCode: '123456'
+                accountNumber: '12345678'
+                correlationId: '1b817431-6a78-403c-a207-62eee9a593c1'
+                insights:
+                  risk:
+                    riskScore: 100
+                    reason: 'BANK_ACCOUNT_ON_WATCHLIST'
+                  relationships:
+                    attribute: 'paye_ref'
+                    count: 2
+                    attributeValues:
+                      - value: '123AB/CD'
+                        numOfOccurrences: 1
+                        lastSeen: '2023-07-05T09:13:53.361Z'
       deprecated: false
   /verify/personal:
     post:
