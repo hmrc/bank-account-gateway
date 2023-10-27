@@ -2,101 +2,27 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
-    "sortCode": {
-      "description": "The sort code for that bank account to be checked",
-      "type": "string",
-      "minLength": 6,
-      "maxLength": 6
-    },
-    "accountNumber": {
-      "description": "The account number for the bank account to be checked",
-      "type": "string",
-      "minLength": 8,
-      "maxLength": 8
-    },
     "correlationId": {
       "description": "A unique `UUID` to allow the request/response to be tracked",
       "type": "string",
       "length": 36
     },
-    "insights": {
-      "description": "Attributes that might be related to the bank account",
-      "type": "object",
-      "properties": {
-        "risk": {
-          "description": "Attributes that might be related to the bank account",
-          "type": "object",
-          "properties": {
-            "riskScore": {
-              "description": "Risk score",
-              "type": "number",
-              "minimum": 0,
-              "maximum": 100
-            },
-            "reason": {
-              "description": "Reason for risk score",
-              "type": "string",
-              "minimum": 0,
-              "maximum": 256
-            }
-          }
-        },
-        "relationships": {
-          "description": "Attributes that might be related to the bank account",
-          "type": "array",
-          "items": {
-            "type": "object",
-            "uniqueItems": true,
-            "properties": {
-              "attribute": {
-                "description": "The type of related attribute",
-                "type": "string"
-              },
-              "count": {
-                "description": "The number of times this type of attribute occurs to be related to the bank account",
-                "type": "integer"
-              },
-              "attributeValues": {
-                "description": "The particular value of the attribute that is related to the bank account",
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "description": "The exact value of the attribute",
-                      "type": "string"
-                    },
-                    "numOfOccurrences": {
-                      "description": "The number of times this particular value of the related attribute occurred in the relationship",
-                      "type": "integer"
-                    },
-                    "lastSeen": {
-                      "description": "The most recent time when this value was observed in this relationship",
-                      "type": "string",
-                      "format": "date-time"
-                    }
-                  },
-                  "required": [
-                    "value",
-                    "numOfOccurrences",
-                    "lastSeen"
-                  ]
-                }
-              }
-            },
-            "required": [
-              "attribute",
-              "count"
-            ]
-          }
-        }
-      }
+    "riskScore": {
+      "description": "Risk score",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "reason": {
+      "description": "Reason for risk score",
+      "type": "string",
+      "minimum": 0,
+      "maximum": 256
     }
   },
   "required": [
-    "sortCode",
-    "accountNumber",
     "correlationId",
-    "insights"
+    "riskScore",
+    "reason"
   ]
 }
