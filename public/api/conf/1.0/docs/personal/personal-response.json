@@ -19,10 +19,10 @@
       "description": "Account number with sortcode is valid",
       "type": "string",
       "oneOf": [
-        {"enum":["yes"], "title": "yes", "description":"The sort code is known and the sort code and account number are correctly formatted and their contents pass our checks"},
-        {"enum":["no"], "title": "no", "description":"The sort code is known but the account number and sort code combination did not pass our checks"},
-        {"enum":["indeterminate"], "title": "indeterminate", "description":"The sort code is unknown, it may be valid but more likely will not resolve to an addressable bank account"},
-        {"enum":["error"], "title": "error", "description":"There was an error attempting to perform a modulus check"}
+        {"enum":["yes"], "type": "string", "title": "yes", "description":"The sort code is known and the sort code and account number are correctly formatted and their contents pass our checks"},
+        {"enum":["no"], "type": "string", "title": "no", "description":"The sort code is known but the account number and sort code combination did not pass our checks"},
+        {"enum":["indeterminate"], "type": "string", "title": "indeterminate", "description":"The sort code is unknown, it may be valid but more likely will not resolve to an addressable bank account"},
+        {"enum":["error"], "type": "string", "title": "error", "description":"There was an error attempting to perform a modulus check"}
       ],
       "examples": [
         "no"
@@ -33,10 +33,10 @@
       "description": "Non-standard account details required for BACS",
       "type": "string",
       "oneOf": [
-        {"enum":["yes"], "title": "yes", "description":"Indicates that a BACS transaction for this account will require additional information (e.g. a Building Society roll number)"},
-        {"enum":["no"], "title": "no", "description":"Indicates that a BACS transaction for this account will NOT require additional information (e.g. a Building Society roll number)"},
-        {"enum":["inapplicable"], "title": "inapplicable", "description":"The sort code and/or account number failed initial validation, and so no further checks were made"},
-        {"enum":["error"], "title": "error", "description":"There was an error when checking if branch requires non-standard details"}
+        {"enum":["yes"], "type": "string", "title": "yes", "description":"Indicates that a BACS transaction for this account will require additional information (e.g. a Building Society roll number)"},
+        {"enum":["no"], "type": "string", "title": "no", "description":"Indicates that a BACS transaction for this account will NOT require additional information (e.g. a Building Society roll number)"},
+        {"enum":["inapplicable"], "type": "string", "title": "inapplicable", "description":"The sort code and/or account number failed initial validation, and so no further checks were made"},
+        {"enum":["error"], "type": "string", "title": "error", "description":"There was an error when checking if branch requires non-standard details"}
       ],
       "examples": [
         "inapplicable"
@@ -55,9 +55,9 @@
       "description": "Sortcode is present on EISCD",
       "type": "string",
       "oneOf": [
-        {"enum":["yes"], "title": "yes", "description":"The sort code given was found by the service"},
-        {"enum":["no"], "title": "no", "description":"The sort code given was NOT found by the service"},
-        {"enum":["error"], "title": "error", "description":"There was an error checking the EISCD data"}
+        {"enum":["yes"], "type": "string", "title": "yes", "description":"The sort code given was found by the service"},
+        {"enum":["no"], "type": "string", "title": "no", "description":"The sort code given was NOT found by the service"},
+        {"enum":["error"], "type": "string", "title": "error", "description":"There was an error checking the EISCD data"}
       ],
       "examples": [
         "yes"
@@ -68,9 +68,9 @@
       "description": "Whether sortcode supports direct debit payment and setup",
       "type": "string",
       "oneOf": [
-        {"enum":["yes"], "title": "yes", "description":"The sort code supports direct debit payment and setup"},
-        {"enum":["no"], "title": "no", "description":"The sort code does not support direct debit payment or setup"},
-        {"enum":["error"], "title": "error", "description":"There was an error checking the EISCD data"}
+        {"enum":["yes"], "type": "string", "title": "yes", "description":"The sort code supports direct debit payment and setup"},
+        {"enum":["no"], "type": "string", "title": "no", "description":"The sort code does not support direct debit payment or setup"},
+        {"enum":["error"], "type": "string", "title": "error", "description":"There was an error checking the EISCD data"}
       ],
       "examples": [
         "no"
@@ -81,9 +81,9 @@
       "description": "Whether sortcode supports direct credit payment",
       "type": "string",
       "oneOf": [
-        {"enum":["yes"], "title": "yes", "description":"The sort code supports direct credit payment"},
-        {"enum":["no"], "title": "no", "description":"The sort code does not support direct credit payment"},
-        {"enum":["error"], "title": "error", "description":"There was an error checking the EISCD data"}
+        {"enum":["yes"], "type": "string", "title": "yes", "description":"The sort code supports direct credit payment"},
+        {"enum":["no"], "type": "string", "title": "no", "description":"The sort code does not support direct credit payment"},
+        {"enum":["error"], "type": "string", "title": "error", "description":"There was an error checking the EISCD data"}
       ],
       "examples": [
         "no"
@@ -102,11 +102,11 @@
       "description": "Account exists",
       "type": "string",
       "oneOf": [
-        {"enum":["yes"], "title": "yes", "description":"The sort code and account number relate to a bank account stored in the third party service"},
-        {"enum":["no"], "title": "no", "description":"The third party service asserted that the account number was not valid for the given sort code"},
-        {"enum":["indeterminate"], "title": "indeterminate", "description":"The sort code and account number were not found in the third party service"},
-        {"enum":["inapplicable"], "title": "inapplicable", "description":"The sort code and/or account number failed initial validation, and so no further checks were made"},
-        {"enum":["error"], "title": "error", "description":"There was an error calling the third party service"}
+        {"enum":["yes"], "type": "string", "title": "yes", "description":"The sort code and account number relate to a bank account stored in the third party service"},
+        {"enum":["no"], "type": "string", "title": "no", "description":"The third party service asserted that the account number was not valid for the given sort code"},
+        {"enum":["indeterminate"], "type": "string", "title": "indeterminate", "description":"The sort code and account number were not found in the third party service"},
+        {"enum":["inapplicable"], "type": "string", "title": "inapplicable", "description":"The sort code and/or account number failed initial validation, and so no further checks were made"},
+        {"enum":["error"], "type": "string", "title": "error", "description":"There was an error calling the third party service"}
       ],
       "examples": [
         "indeterminate"
@@ -117,12 +117,12 @@
       "description": "Name matches",
       "type": "string",
       "oneOf": [
-        {"enum":["yes"], "title": "yes", "description":"The provided subject name was found to match the account holder name stored by the third party service"},
-        {"enum":["no"], "title": "no", "description":"No match was found for the provided subject name in the third party service"},
-        {"enum":["partial"], "title": "partial", "description":"After normalisation, the provided business name was found to be a close match to the one stored by the third party service E.g 'Mr P Smith' vs 'Mr Peter Smith'."},
-        {"enum":["indeterminate"], "title": "indeterminate", "description":"The sort code and account number did not resolve to an account stored in the third party service"},
-        {"enum":["inapplicable"], "title": "inapplicable", "description":"The sort code and/or account number failed initial validation, and so no further checks were made"},
-        {"enum":["error"], "title": "error", "description":"There was an error calling the third party service"}
+        {"enum":["yes"], "type": "string", "title": "yes", "description":"The provided subject name was found to match the account holder name stored by the third party service"},
+        {"enum":["no"], "type": "string", "title": "no", "description":"No match was found for the provided subject name in the third party service"},
+        {"enum":["partial"], "type": "string", "title": "partial", "description":"After normalisation, the provided business name was found to be a close match to the one stored by the third party service E.g 'Mr P Smith' vs 'Mr Peter Smith'."},
+        {"enum":["indeterminate"], "type": "string", "title": "indeterminate", "description":"The sort code and account number did not resolve to an account stored in the third party service"},
+        {"enum":["inapplicable"], "type": "string", "title": "inapplicable", "description":"The sort code and/or account number failed initial validation, and so no further checks were made"},
+        {"enum":["error"], "type": "string", "title": "error", "description":"There was an error calling the third party service"}
       ],
       "examples": [
         "no"
