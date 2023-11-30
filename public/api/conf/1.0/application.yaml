@@ -66,6 +66,18 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/MiscBankAccountVerifyPersonalRequest"
+            example:
+              {
+                "account": {
+                  "sortCode": "991122",
+                  "accountNumber": "12345678"
+                },
+                "subject": {
+                  "title": "Mr",
+                  "name": "John Smith",
+                  "dob": "1970-12-31"
+                }
+              }
         required: true
       responses:
         "200":
@@ -75,6 +87,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/MiscBankAccountVerifyPersonalResponse"
+              example:
+                {
+                  "accountNumberIsWellFormatted": "yes",
+                  "accountExists": "yes",
+                  "nameMatches": "partial",
+                  "accountName": "Mr Peter Smith",
+                  "nonStandardAccountDetailsRequiredForBacs": "no",
+                  "sortCodeIsPresentOnEISCD": "yes",
+                  "sortCodeSupportsDirectDebit":  "yes",
+                  "sortCodeSupportsDirectCredit": "yes",
+                  "iban": "GB25NWBK60080600724890"
+                }
       deprecated: false
   /verify/business:
     post:
@@ -99,6 +123,17 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/MiscBankAccountVerifyBusinessRequest"
+            example:
+              {
+                "account": {
+                  "accountNumber": "14378881",
+                  "sortCode": "463509"
+                },
+                "business": {
+                  "companyName": "co ltd",
+                  "companyRegistrationNumber": "123456789"
+                }
+              }
         required: true
       responses:
         "200":
@@ -108,6 +143,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/MiscBankAccountVerifyBusinessResponse"
+              example:
+                {
+                  "accountNumberIsWellFormatted": "yes",
+                  "nonStandardAccountDetailsRequiredForBacs": "no",
+                  "sortCodeBankName": "NATWEST",
+                  "sortCodeIsPresentOnEISCD": "yes",
+                  "sortCodeSupportsDirectDebit": "no",
+                  "sortCodeSupportsDirectCredit": "no",
+                  "iban": "GB25NWBK60080600724890",
+                  "accountExists": "yes",
+                  "nameMatches": "indeterminate"
+                }
       deprecated: false
 components:
   securitySchemes:
@@ -209,7 +256,7 @@ components:
       properties:
         accountNumberIsWellFormatted:
           description: "Account number with sortcode is valid"
-          type: "object"
+          type: "string"
           oneOf:
             - enum:
                 - "yes"
