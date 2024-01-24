@@ -49,7 +49,7 @@ class BankAccountInsightsController @Inject()(cc: ControllerComponents, config: 
         if (result) {
           logger.info("Connectivity to bank-account-insights established")
         } else {
-          logger.error("ERROR: Could not connect to bank-account-insights")
+          logger.warn("ERROR: Could not connect to bank-account-insights")
         }
     }
   }
