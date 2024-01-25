@@ -51,7 +51,7 @@ class DownstreamConnectorSpec extends AnyWordSpec with Matchers with GuiceOneApp
             Action(Ok("{}").withHeaders("Content-Type" -> "application/json"))
         }
       } { _ =>
-        val result = await(connector.checkConnectivity(s"http://localhost:${insightsPort}/check/insights", "1234"))
+        val result = await(connector.checkConnectivity(s"http://localhost:$insightsPort/check/insights", "1234"))
         result shouldBe true
       }
     }
@@ -64,7 +64,7 @@ class DownstreamConnectorSpec extends AnyWordSpec with Matchers with GuiceOneApp
             Action(BadRequest("{}").withHeaders("Content-Type" -> "application/json"))
         }
       } { _ =>
-        val result = await(connector.checkConnectivity(s"http://localhost:${insightsPort}/check/insights", "1234"))
+        val result = await(connector.checkConnectivity(s"http://localhost:$insightsPort/check/insights", "1234"))
         result shouldBe true
       }
     }
@@ -77,7 +77,7 @@ class DownstreamConnectorSpec extends AnyWordSpec with Matchers with GuiceOneApp
             Action(Unauthorized("{}").withHeaders("Content-Type" -> "application/json"))
         }
       } { _ =>
-        val result = await(connector.checkConnectivity(s"http://localhost:${insightsPort}/check/insights", "1234"))
+        val result = await(connector.checkConnectivity(s"http://localhost:$insightsPort/check/insights", "1234"))
         result shouldBe false
       }
     }
@@ -90,7 +90,7 @@ class DownstreamConnectorSpec extends AnyWordSpec with Matchers with GuiceOneApp
             Action(NotFound)
         }
       } { _ =>
-        val result = await(connector.checkConnectivity(s"http://localhost:${insightsPort}/check/insights", "1234"))
+        val result = await(connector.checkConnectivity(s"http://localhost:$insightsPort/check/insights", "1234"))
         result shouldBe false
       }
     }
@@ -103,7 +103,7 @@ class DownstreamConnectorSpec extends AnyWordSpec with Matchers with GuiceOneApp
             Action(InternalServerError)
         }
       } { _ =>
-        val result = await(connector.checkConnectivity(s"http://localhost:${insightsPort}/check/insights", "1234"))
+        val result = await(connector.checkConnectivity(s"http://localhost:$insightsPort/check/insights", "1234"))
         result shouldBe false
       }
     }
@@ -116,7 +116,7 @@ class DownstreamConnectorSpec extends AnyWordSpec with Matchers with GuiceOneApp
             Action(BadGateway)
         }
       } { _ =>
-        val result = await(connector.checkConnectivity(s"http://localhost:${insightsPort}/check/insights", "1234"))
+        val result = await(connector.checkConnectivity(s"http://localhost:$insightsPort/check/insights", "1234"))
         result shouldBe false
       }
     }
