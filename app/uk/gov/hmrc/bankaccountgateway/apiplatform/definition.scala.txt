@@ -1,7 +1,6 @@
 @import play.api.libs.json.Json
 @(status: String)
 {
-  "scopes": [],
   "api": {
     "name": "Bank Account",
     "description": "Validation, verification and insights into Bank Accounts - provided by the Customer Insight Platform",
