@@ -29,7 +29,6 @@ import play.api.routing.sird.{POST => SPOST, _}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.core.server.{Server, ServerConfig}
-import uk.gov.hmrc.http.HeaderCarrier
 
 class BankAccountInsightsControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
   val insightsPort = 11222
@@ -42,7 +41,6 @@ class BankAccountInsightsControllerSpec extends AnyWordSpec with Matchers with G
   implicit val mat: Materializer = app.injector.instanceOf[Materializer]
 
   "POST /check/insights" should {
-    implicit val hc: HeaderCarrier = HeaderCarrier()
 
     "forward a 200 response from the downstream service" in {
       val response = """{

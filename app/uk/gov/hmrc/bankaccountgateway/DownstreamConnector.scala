@@ -16,12 +16,11 @@
 
 package uk.gov.hmrc.bankaccountgateway
 
-import com.fasterxml.jackson.core.JsonParseException
 import play.api.Logger
 import play.api.http.HeaderNames._
 import play.api.http.{HttpEntity, MimeTypes}
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.Results.{BadGateway, BadRequest, InternalServerError, MethodNotAllowed}
+import play.api.mvc.Results.{BadGateway, InternalServerError, MethodNotAllowed}
 import play.api.mvc.{AnyContent, Request, ResponseHeader, Result}
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpClient, HttpResponse}
 

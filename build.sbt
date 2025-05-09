@@ -8,7 +8,7 @@ val appName = "bank-account-gateway"
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .settings(
-    libraryDependencies              ++= AppDependencies.compile ++ AppDependencies.test,
+    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
   )
   .settings(PlayKeys.playDefaultPort := 8345)
   .settings(resolvers += Resolver.jcenterRepo)
