@@ -26,7 +26,6 @@ import play.api.mvc.Results._
 import play.api.routing.sird.{POST => SPOST, _}
 import play.api.test.Helpers._
 import play.core.server.{Server, ServerConfig}
-import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -41,7 +40,6 @@ class DownstreamConnectorSpec extends AnyWordSpec with Matchers with GuiceOneApp
   implicit val mat: Materializer = app.injector.instanceOf[Materializer]
 
   "Checking connectivity" should {
-    implicit val hc: HeaderCarrier = HeaderCarrier()
 
     "return true if the remote service returns a 200" in {
       Server.withRouterFromComponents(ServerConfig(port = Some(insightsPort))) { components =>
