@@ -1,0 +1,717 @@
+openapi: 3.0.1
+info:
+  title: Sample API
+  description: >-
+    This API provides endpoints to verify bank account details and to get insights about a bank account. The API is designed to be used by HMRC services to validate personal and business bank accounts, ensuring that the provided details match valid bank accounts
+
+
+     ```
+
+    Change Log
+
+    ```
+
+      | Version | Date | Author | Description |
+      |---|-----|------|-----|
+      | 1.0.0 | 28-05-2025 | Graham Cook | Initial draft of bank account API specification|
+      | ?.?.? | dd-mm-yyyy | Change Owner Name | Details of next version |
+
+
+  termsOfService: http://INSERT_LINK_TO_SLA_HERE
+
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+
+  version: "1.0.0"
+
+  x-integration-catalogue:
+    reviewed-date:
+    platform: HIP
+    short-description: Bank Account verification API
+    status: ALPHA
+    api-type: SIMPLE
+    backends:
+      - INSERT_HOD_ACRONYM_HERE
+    domain: 6
+    sub-domain: 6.2
+
+servers:
+  - url: "https://hip.ws.ibt.hmrc.gov.uk/cip-attribute-services"
+    description: "MDTP QA"
+  - url: "https://hip.ws.hmrc.gov.uk/cip-attribute-services"
+    description: "MDTP Production"
+
+security:
+  - oAuth2:
+      - bank-account-api-scope
+
+tags:
+  - name: bank-account-endpoint
+    description: Bank account verify and insights
+
+paths:
+  /check/insights:
+    post:
+      summary: "Bank account insights"
+      description: "Get insights about a bank account\n"
+      operationId: "Bankaccountinsights"
+      security:
+        - applicationRestricted: []
+      parameters: []
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MiscBankAccountCheckInsightsRequest"
+            example:
+              sortCode: "123456"
+              accountNumber: "12345678"
+        required: true
+      responses:
+        "200":
+          description: "Bank account insights"
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MiscBankAccountCheckInsightsResponse"
+              example:
+                correlationId: "1b817431-6a78-403c-a207-62eee9a593c1"
+                riskScore: 100
+                reason: "ACCOUNT_ON_WATCHLIST"
+
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+              examples:
+                badRequest:
+                  $ref: '#/components/examples/errorResponseBodyExample'
+        "403":
+          description: Forbidden
+          content: {}
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500ResponseBody'
+              examples:
+                internalServerError:
+                  $ref: '#/components/examples/error500ResponseBodyExample'
+
+      deprecated: false
+  /verify/personal:
+    post:
+      summary: "Verify personal bank account details"
+      description: "Check if the provided personal bank account details match a valid\
+        \ bank account"
+      operationId: "Verifypersonalbankaccountdetails"
+      security:
+        - applicationRestricted: []
+      parameters:
+        - name: "User-Agent"
+          in: "header"
+          description: "Calling service identifier"
+          required: true
+          style: "simple"
+          schema:
+            type: "string"
+            example: "calling-service"
+      requestBody:
+        description: "Personal verify request"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MiscBankAccountVerifyPersonalRequest"
+            example:
+              {
+                "account": {
+                  "sortCode": "991122",
+                  "accountNumber": "12345678"
+                },
+                "subject": {
+                  "title": "Mr",
+                  "name": "John Smith",
+                  "dob": "1970-12-31"
+                }
+              }
+        required: true
+      responses:
+        "200":
+          description: "Personal verify response"
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MiscBankAccountVerifyPersonalResponse"
+              example:
+                {
+                  "accountNumberIsWellFormatted": "yes",
+                  "accountExists": "yes",
+                  "nameMatches": "partial",
+                  "accountName": "Mr Peter Smith",
+                  "nonStandardAccountDetailsRequiredForBacs": "no",
+                  "sortCodeIsPresentOnEISCD": "yes",
+                  "sortCodeSupportsDirectDebit":  "yes",
+                  "sortCodeSupportsDirectCredit": "yes",
+                  "iban": "GB25NWBK60080600724890"
+                }
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+              examples:
+                badRequest:
+                  $ref: '#/components/examples/errorResponseBodyExample'
+        "403":
+          description: Forbidden
+          content: {}
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500ResponseBody'
+              examples:
+                internalServerError:
+                  $ref: '#/components/examples/error500ResponseBodyExample'
+      deprecated: false
+  /verify/business:
+    post:
+      summary: "Verify business bank account details"
+      description: "Check if the provided business bank account details match a valid\
+        \ bank account"
+      operationId: "Verifybusinessbankaccountdetails"
+      security:
+        - applicationRestricted: []
+      parameters:
+        - name: "User-Agent"
+          in: "header"
+          description: "Calling service identifier"
+          required: true
+          style: "simple"
+          schema:
+            type: "string"
+            example: "calling-service"
+      requestBody:
+        description: "Business verify request"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MiscBankAccountVerifyBusinessRequest"
+            example:
+              {
+                "account": {
+                  "accountNumber": "14378881",
+                  "sortCode": "463509"
+                },
+                "business": {
+                  "companyName": "co ltd",
+                  "companyRegistrationNumber": "123456789"
+                }
+              }
+        required: true
+      responses:
+        "200":
+          description: "Business verify response"
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MiscBankAccountVerifyBusinessResponse"
+              example:
+                {
+                  "accountNumberIsWellFormatted": "yes",
+                  "nonStandardAccountDetailsRequiredForBacs": "no",
+                  "sortCodeBankName": "NATWEST",
+                  "sortCodeIsPresentOnEISCD": "yes",
+                  "sortCodeSupportsDirectDebit": "no",
+                  "sortCodeSupportsDirectCredit": "no",
+                  "iban": "GB25NWBK60080600724890",
+                  "accountExists": "yes",
+                  "nameMatches": "indeterminate"
+                }
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+              examples:
+                badRequest:
+                  $ref: '#/components/examples/errorResponseBodyExample'
+        "403":
+          description: Forbidden
+          content: { }
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500ResponseBody'
+              examples:
+                internalServerError:
+                  $ref: '#/components/examples/error500ResponseBodyExample'
+      deprecated: false
+
+components:
+  securitySchemes:
+    applicationRestricted:
+      type: "oauth2"
+      description: "HMRC supports OAuth 2.0 for authenticating application restricted\
+        \ API requests using an OAuth 2.0 Bearer Token in the AUTHORIZATION header.\n\
+        See https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints\
+        \ for details.\n"
+      flows:
+        clientCredentials:
+          tokenUrl: "https://api.service.hmrc.gov.uk/oauth/token"
+          scopes: {}
+  schemas:
+    MiscBankAccountCheckInsightsResponse:
+      title: "MiscBankAccountCheckInsightsResponse"
+      required:
+        - "correlationId"
+        - "riskScore"
+        - "reason"
+      type: "object"
+      properties:
+        correlationId:
+          type: "string"
+          description: "A unique `UUID` to allow the request/response to be tracked"
+        riskScore:
+          maximum: 100
+          minimum: 0
+          type: "number"
+          description: "Risk score"
+        reason:
+          type: "string"
+          description: "Reason for risk score"
+    MiscBankAccountCheckInsightsRequest:
+      title: "MiscBankAccountCheckInsightsRequest"
+      required:
+        - "sortCode"
+        - "accountNumber"
+      type: "object"
+      properties:
+        sortCode:
+          maxLength: 6
+          minLength: 6
+          type: "string"
+          description: "The sort code for the bank account"
+        accountNumber:
+          maxLength: 8
+          minLength: 8
+          type: "string"
+          description: "Account number for the bank account (Account numbers with\
+            \ a length less than 8 digits should be prefixed with zeros to pad it\
+            \ up to 8 digits, e.g. 00123456)"
+    MiscBankAccountVerifyPersonalRequest:
+      title: "VerifyPersonalRequest"
+      type: "object"
+      required:
+        - "account"
+        - "subject"
+      properties:
+        account:
+          type: "object"
+          required:
+            - "accountNumber"
+            - "sortCode"
+          properties:
+            accountNumber:
+              description: "The bank account number, 8 digits long"
+              type: "string"
+              example:
+                - "79499414"
+                - "07336121"
+            sortCode:
+              description: "The bank sort code, 6 digits long (whitespace and/or dashes should be removed)"
+              type: "string"
+              example:
+                - "832237"
+        subject:
+          type: "object"
+          description: "Subject"
+          required:
+            - "name"
+          properties:
+            name:
+              description: "The subjects full name. This should include first and last names. Title is optional."
+              type: "string"
+              example:
+                - "Mr Joe Bloggs"
+    MiscBankAccountVerifyPersonalResponse:
+      title: "VerifyPersonalResponse"
+      type: "object"
+      required:
+        - "accountNumberIsWellFormatted"
+        - "nonStandardAccountDetailsRequiredForBacs"
+        - "sortCodeIsPresentOnEISCD"
+        - "sortCodeSupportsDirectDebit"
+        - "sortCodeSupportsDirectCredit"
+        - "accountExists"
+        - "nameMatches"
+      properties:
+        accountNumberIsWellFormatted:
+          description: "Account number with sortcode is valid"
+          type: "string"
+          oneOf:
+            - enum:
+                - "yes"
+              description: "The sort code is known and the sort code and account number are correctly formatted and their contents pass our checks"
+            - enum:
+                - "no"
+              description: "The sort code is known but the account number and sort code combination did not pass our checks"
+            - enum:
+                - "indeterminate"
+              description: "The sort code is unknown, it may be valid but more likely will not resolve to an addressable bank account"
+            - enum:
+                - "error"
+              description: "There was an error attempting to perform a modulus check"
+          example:
+            - "no"
+        nonStandardAccountDetailsRequiredForBacs:
+          description: "Non-standard account details required for BACS"
+          type: "string"
+          oneOf:
+            - enum:
+                - "yes"
+              description: "Indicates that a BACS transaction for this account will require additional information (e.g. a Building Society roll number)"
+            - enum:
+                - "no"
+              description: "Indicates that a BACS transaction for this account will NOT require additional information (e.g. a Building Society roll number)"
+            - enum:
+                - "inapplicable"
+              description: "The sort code and/or account number failed initial validation, and so no further checks were made"
+            - enum:
+                - "error"
+              description: "There was an error when checking if branch requires non-standard details"
+          example:
+            - "inapplicable"
+        sortCodeBankName:
+          description: "Sortcode bank name"
+          type: "string"
+          example:
+            - "THE ROYAL BANK OF SCOTLAND PLC"
+        sortCodeIsPresentOnEISCD:
+          description: "Sortcode is present on EISCD"
+          type: "string"
+          oneOf:
+            - enum:
+                - "yes"
+              description: "The sort code given was found by the service"
+            - enum:
+                - "no"
+              description: "The sort code given was NOT found by the service"
+            - enum:
+                - "error"
+              description: "There was an error checking the EISCD data"
+          example:
+            - "yes"
+        sortCodeSupportsDirectDebit:
+          description: "Whether sortcode supports direct debit payment and setup"
+          type: "string"
+          oneOf:
+            - enum:
+                - "yes"
+              description: "The sort code supports direct debit payment and setup"
+            - enum:
+                - "no"
+              description: "The sort code does not support direct debit payment or setup"
+            - enum:
+                - "error"
+              description: "There was an error checking the EISCD data"
+          example:
+            - "no"
+        sortCodeSupportsDirectCredit:
+          description: "Whether sortcode supports direct credit payment"
+          type: "string"
+          oneOf:
+            - enum:
+                - "yes"
+              description: "The sort code supports direct credit payment"
+            - enum:
+                - "no"
+              description: "The sort code does not support direct credit payment"
+            - enum:
+                - "error"
+              description: "There was an error checking the EISCD data"
+          example:
+            - "no"
+        iban:
+          description: "The IBAN for the given account number / sort code"
+          type: "string"
+          example:
+            - "GB25NWBK60080600724890"
+        accountExists:
+          description: "Account exists"
+          type: "string"
+          oneOf:
+            - enum:
+                - "yes"
+              description: "The sort code and account number relate to a bank account stored in the third party service"
+            - enum:
+                - "no"
+              description: "The third party service asserted that the account number was not valid for the given sort code"
+            - enum:
+                - "indeterminate"
+              description: "The sort code and account number were not found in the third party service"
+            - enum:
+                - "inapplicable"
+              description: "The sort code and/or account number failed initial validation, and so no further checks were made"
+            - enum:
+                - "error"
+              description: "There was an error calling the third party service"
+          example:
+            - "indeterminate"
+        nameMatches:
+          description: "Name matches"
+          type: "string"
+          oneOf:
+            - enum:
+                - "yes"
+              description: "The provided subject name was found to match the account holder name stored by the third party service"
+            - enum:
+                - "no"
+              description: "No match was found for the provided subject name in the third party service"
+            - enum:
+                - "partial"
+              description: "After normalisation, the provided business name was found to be a close match to the one stored by the third party service E.g 'Mr P Smith' vs 'Mr Peter Smith'."
+            - enum:
+                - "indeterminate"
+              description: "The sort code and account number did not resolve to an account stored in the third party service"
+            - enum:
+                - "inapplicable"
+              description: "The sort code and/or account number failed initial validation, and so no further checks were made"
+            - enum:
+                - "error"
+              description: "There was an error calling the third party service"
+          example:
+            - "no"
+        accountName:
+          description: "In the case of a partial name match, this will be the name on the account as reported by the third party"
+          type: "string"
+          example:
+            - "Mr Peter Smith"
+    MiscBankAccountVerifyBusinessRequest:
+      title: "VerifyBusinessRequest"
+      type: "object"
+      required:
+        - "account"
+        - "business"
+      properties:
+        account:
+          description: "Account"
+          type: "object"
+          required:
+            - "accountNumber"
+            - "sortCode"
+          properties:
+            accountNumber:
+              title: "Account Number"
+              description: "The bank account number, 8 characters long"
+              type: "string"
+              example:
+                - "14378881"
+                - "07336121"
+            sortCode:
+              title: "Sortcode"
+              description: "The bank sort code, 6 characters long (whitespace and/or dashes should be removed)"
+              type: "string"
+              example:
+                - "463509"
+        business:
+          description: "Business"
+          type: "object"
+          required:
+            - "companyName"
+          properties:
+            companyName:
+              title: "Companyname"
+              description: "The account name provided to the bank (usually the same as the registered company name, but with complex company setups this may not be true)"
+              type: "string"
+              example:
+                - "co ltd"
+    MiscBankAccountVerifyBusinessResponse:
+      title: "VerifyBusinessResponse"
+      type: "object"
+      required:
+        - "accountNumberIsWellFormatted"
+        - "nonStandardAccountDetailsRequiredForBacs"
+        - "sortCodeIsPresentOnEISCD"
+        - "sortCodeSupportsDirectDebit"
+        - "sortCodeSupportsDirectCredit"
+        - "accountExists"
+        - "nameMatches"
+      properties:
+        accountNumberIsWellFormatted:
+          description: "Account number has been checked and it is well formatted"
+          type: "string"
+          oneOf:
+            - enum:
+                - "yes"
+              description: "The sort code is known and the sort code and account number are correctly formatted and their contents pass our implementation of the BACS standard modulus check"
+            - enum:
+                - "no"
+              description: "The sort code is known but the account number and sort code combination did not pass out implementation of the BACS standard modulus check"
+            - enum:
+                - "indeterminate"
+              description: "The sort code is unknown and would not resolve to an addressable bank account, therefore it cannot be mod checked"
+            - enum:
+                - "error"
+              description: "There was an error attempting to perform a modulus check"
+          example:
+            - "indeterminate"
+        nonStandardAccountDetailsRequiredForBacs:
+          description: "Non-standard account details required for BACS"
+          type: "string"
+          oneOf:
+            - enum:
+                - "yes"
+              description: "Indicates that a BACS transaction for this account will require additional information (e.g. a Building Society roll number)"
+            - enum:
+                - "no"
+              description: "Indicates that a BACS transaction for this account will NOT require additional information (e.g. a Building Society roll number)."
+            - enum:
+                - "inapplicable"
+              description: "The sort code and/or account number failed initial validation, and so no further checks were made"
+            - enum:
+                - "error"
+              description: "There was an error when checking if branch requires non-standard details"
+          example:
+            - "no"
+        sortCodeBankName:
+          description: "Bank name associated with sort code"
+          type: "string"
+          example:
+            - "NATWEST"
+        sortCodeIsPresentOnEISCD:
+          description: "Sortcode is present on EISCD"
+          type: "string"
+          oneOf:
+            - enum:
+                - "yes"
+              description: "The sort code exists in the EISCD database"
+            - enum:
+                - "no"
+              description: "The sort code does not exist in the EISCD"
+            - enum:
+                - "error"
+              description: "There was an error calling the third party service"
+          example:
+            - "no"
+        sortCodeSupportsDirectDebit:
+          description: "Whether sortcode supports direct debit payment and setup"
+          type: "string"
+          oneOf:
+            - enum:
+                - "yes"
+              description: "The sort code supports direct debit payment and setup"
+            - enum:
+                - "no"
+              description: "The sort code does not support direct debit payment or setup"
+            - enum:
+                - "error"
+              description: "There was an error checking the eiscd data"
+          example:
+            - "no"
+        sortCodeSupportsDirectCredit:
+          description: "Whether sortcode supports direct credit payment"
+          type: "string"
+          oneOf:
+            - enum:
+                - "yes"
+              description: "The sort code supports direct credit payment"
+            - enum:
+                - "no"
+              description: "The sort code does not support direct credit payment"
+            - enum:
+                - "error"
+              description: "There was an error checking the eiscd data"
+          example:
+            - "no"
+        iban:
+          description: "The IBAN for the given account number / sort code"
+          type: "string"
+          example:
+            - "GB25NWBK60080600724890"
+        accountExists:
+          description: "Account exists"
+          type: "string"
+          oneOf:
+            - enum:
+                - "yes"
+              description: "The sort code and account number relate to a bank account stored in the third party service"
+            - enum:
+                - "no"
+              description: "The third party service asserted that the account number was not valid for the given sort code"
+            - enum:
+                - "indeterminate"
+              description: "The sort code and account number were not found in the third party service"
+            - enum:
+                - "inapplicable"
+              description: "The sort code and/or account number failed initial validation, and so no further checks were made"
+            - enum:
+                - "error"
+              description: "There was an error checking the third party service"
+          example:
+            - "inapplicable"
+        nameMatches:
+          description: "Name matches"
+          type: "string"
+          oneOf:
+            - enum:
+                - "yes"
+              description: "After normalisation, the provided business name was found to match one stored by the third party service"
+            - enum:
+                - "no"
+              description: "After normalisation, no match was found for the provided business name in the third party service"
+            - enum:
+                - "partial"
+              description: "After normalisation, the provided business name was found to be a close match to the one stored by the third party service E.g\
+              \ 'ACME inc' vs 'ACME incorporated'."
+            - enum:
+                - "indeterminate"
+              description: "The sort code and account number did not resolve to an account stored in the third party service"
+            - enum:
+                - "inapplicable"
+              description: "The sort code and/or account number failed initial validation, and so no further checks were made"
+            - enum:
+                - "error"
+              description: "There was an error checking the third party service"
+          example:
+            - "inapplicable"
+        accountName:
+          description: "In the case of a partial name match, this will be the name on the account as reported by the third party"
+          type: "string"
+          example:
+            - "ACME Inc"
+    errorResponseBody:
+      title: SimpleErrorObject
+      type: object
+      properties:
+        error:
+          type: string
+          description: error
+    error500ResponseBody:
+      title: SimpleErrorObject
+      type: object
+      properties:
+        error:
+          type: string
+          description: error
+
+  examples:
+    errorResponseBodyExample:
+      value:
+        error: "{code: REQUEST_DOWNSTREAM, desc: An issue occurred when the downstream service tried to handle the request}"
+    error500ResponseBodyExample:
+      value:
+        error: "{code: REQUEST_DOWNSTREAM, desc: An issue occurred when the downstream service tried to handle the request}"
