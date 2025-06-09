@@ -26,7 +26,7 @@ info:
   version: "1.0.0"
 
   x-integration-catalogue:
-    reviewed-date:
+    reviewed-date: 2025-06-09
     platform: HIP
     short-description: Bank Account verification API
     status: ALPHA
