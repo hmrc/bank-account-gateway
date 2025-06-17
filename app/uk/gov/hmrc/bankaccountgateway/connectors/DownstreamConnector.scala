@@ -19,7 +19,7 @@ package uk.gov.hmrc.bankaccountgateway.connectors
 import play.api.Logger
 import play.api.http.HeaderNames._
 import play.api.http.{HttpEntity, MimeTypes}
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.JsObject
 import play.api.mvc.Results.{BadGateway, InternalServerError, MethodNotAllowed}
 import play.api.mvc.{AnyContent, Request, ResponseHeader, Result}
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -68,26 +68,5 @@ class DownstreamConnector @Inject()(httpClient: HttpClientV2) {
         Future.successful(MethodNotAllowed("{\"code\": \"UNSUPPORTED_METHOD\", \"desc\": \"Unsupported HTTP method or content-type\"}").as(MimeTypes.JSON))
     }
   }
-
-  def checkConnectivity(url: String, authToken: String)(implicit ec: ExecutionContext): Future[Boolean] = {
-    import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
-    implicit val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization(authToken)))
-
-    try {
-      httpClient
-        .post(url"$url")
-        .withBody(Json.parse("{}"))
-        .execute[HttpResponse]
-        .map {
-          case response if response.status > 400 => false
-          case response if response.status / 100 == 5 => false
-          case _ => true
-        }.recoverWith { case t: Throwable =>
-          Future.successful(false)
-        }
-    }
-    catch {
-      case t: Throwable => Future.successful(false)
-    }
-  }
+  
 }

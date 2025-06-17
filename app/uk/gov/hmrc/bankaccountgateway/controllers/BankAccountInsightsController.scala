@@ -51,18 +51,4 @@ class BankAccountInsightsController @Inject()(cc: ControllerComponents, config: 
         }
     }
   }
-
-  def checkConnectivity(): Unit = {
-    val url = s"${config.insightsBaseUrl}/check/insights"
-    connector.checkConnectivity(url, config.internalAuthToken).map {
-      result =>
-        if (result) {
-          logger.info("Connectivity to bank-account-insights established")
-        } else {
-          logger.warn("ERROR: Could not connect to bank-account-insights")
-        }
-    }
-  }
-
-  checkConnectivity()
 }
