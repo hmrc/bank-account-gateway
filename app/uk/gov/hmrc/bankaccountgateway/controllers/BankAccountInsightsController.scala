@@ -33,12 +33,21 @@ class BankAccountInsightsController @Inject()(cc: ControllerComponents, config: 
 
   private val logger = Logger(this.getClass.getSimpleName)
 
+  private val CORRELATION_ID_HEADER = "CorrelationId"
+
   def any(): Action[AnyContent] = Action.async { implicit request =>
     toggledAuthorised(config.rejectInternalTraffic, AuthProviders(StandardApplication, PrivilegedApplication)) {
+      val correlationId: Option[String] = request.headers.get(CORRELATION_ID_HEADER)
       val path = request.target.uri.toString.replace("bank-account-gateway", "bank-account-insights")
       val url = s"${config.insightsBaseUrl}$path"
 
       connector.forward(request, url, config.internalAuthToken)
+        .map { result =>
+          correlationId match {
+            case Some(id) => result.withHeaders(CORRELATION_ID_HEADER -> id)
+            case None     => result
+          }
+        }
     }
   }
 

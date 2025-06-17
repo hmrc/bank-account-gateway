@@ -30,7 +30,7 @@ import play.api.libs.json._
 import play.api.libs.ws.WSClient
 import uk.gov.hmrc.http.test.ExternalWireMockSupport
 
-class BankAccountInsightsControllerIntegrationSpec extends AnyWordSpec
+class BankAccountReputationControllerIntegrationSpec extends AnyWordSpec
   with Matchers
   with ScalaFutures
   with IntegrationPatience
@@ -44,18 +44,20 @@ class BankAccountInsightsControllerIntegrationSpec extends AnyWordSpec
     GuiceApplicationBuilder()
       .configure(
         "metrics.enabled" -> false,
-        "microservice.services.bank-account-insights.port" -> externalWireMockPort
+        "microservice.services.bank-account-reputation.port" -> externalWireMockPort,
+        "microservice.rejectInternalTraffic" -> false // Disable internal traffic rejection for testing
       )
       .build()
 
   private val CORRELATION_ID_HEADER_NAME = "CorrelationId"
+
   private val testCorrelationId = "f0bd1f32-de51-45cc-9b18-0520d6e3ab1a"
 
-  "BankAccountInsightsController" should {
+  "BankAccountReputationController" should {
     "respond with OK status" when {
-      "a valid json payload is provided" in {
+      "verifying a business account" in {
         externalWireMockServer.stubFor(
-          post(urlEqualTo(s"/bank-account-insights/check/insights"))
+          post(urlEqualTo(s"/bank-account-reputation/verify/business"))
             .withRequestBody(equalToJson("""{"sortCode":"123456", "accountNumber": "12345678"}"""))
             .withHeader(HeaderNames.CONTENT_TYPE, equalTo(MediaTypes.`application/json`.value))
             .withHeader(CORRELATION_ID_HEADER_NAME, equalTo(testCorrelationId)) // ensure correlation ID is passed to the downstream service
@@ -68,7 +70,32 @@ class BankAccountInsightsControllerIntegrationSpec extends AnyWordSpec
 
         val response =
           wsClient
-            .url(s"$baseUrl/check/insights")
+            .url(s"$baseUrl/verify/business")
+            .withHttpHeaders(HeaderNames.CONTENT_TYPE -> MimeTypes.JSON)
+            .withHttpHeaders(CORRELATION_ID_HEADER_NAME -> testCorrelationId)
+            .post(Json.parse("""{"sortCode":"123456", "accountNumber":"12345678"}"""))
+            .futureValue
+
+        response.status shouldBe OK
+        response.header(CORRELATION_ID_HEADER_NAME) shouldBe Some(testCorrelationId) // ensure correlation ID is echoed back on the response
+      }
+
+      "verifying a personal account" in {
+        externalWireMockServer.stubFor(
+          post(urlEqualTo(s"/bank-account-reputation/verify/personal"))
+            .withRequestBody(equalToJson("""{"sortCode":"123456", "accountNumber": "12345678"}"""))
+            .withHeader(HeaderNames.CONTENT_TYPE, equalTo(MediaTypes.`application/json`.value))
+            .withHeader(CORRELATION_ID_HEADER_NAME, equalTo(testCorrelationId)) // ensure correlation ID is passed to the downstream service
+            .willReturn(
+              aResponse()
+                .withBody("""{"status":"VERIFIED", "code": "Phone verification code successfully sent"}""")
+                .withStatus(OK)
+            )
+        )
+
+        val response =
+          wsClient
+            .url(s"$baseUrl/verify/personal")
             .withHttpHeaders(HeaderNames.CONTENT_TYPE -> MimeTypes.JSON)
             .withHttpHeaders(CORRELATION_ID_HEADER_NAME -> testCorrelationId)
             .post(Json.parse("""{"sortCode":"123456", "accountNumber":"12345678"}"""))
@@ -79,29 +106,6 @@ class BankAccountInsightsControllerIntegrationSpec extends AnyWordSpec
       }
     }
 
-    "respond with BAD_REQUEST status" when {
-      "an invalid json payload is provided" in {
-        externalWireMockServer.stubFor(
-          post(urlEqualTo(s"/bank-account-insights/check/insights"))
-            .withRequestBody(equalToJson("""{"sortCode":"123456", "accountNumber": "12345678"}"""))
-            .withHeader(HeaderNames.CONTENT_TYPE, equalTo(MediaTypes.`application/json`.value))
-            .willReturn(
-              aResponse()
-                .withBody("""{"correlationId":"1234567809823498457", "risk": 0, "reason": "ACCOUNT_NOT_ON_WATCH_LIST"}""")
-                .withStatus(OK)
-            )
-        )
 
-        val response =
-          wsClient
-            .url(s"$baseUrl/check/insights")
-            .withHttpHeaders(HeaderNames.CONTENT_TYPE -> MimeTypes.JSON)
-            .post("""{"sortCode":"123456", "accountNumber":"12345678}""")
-            .futureValue
-
-        response.status shouldBe BAD_REQUEST
-        Json.parse(response.body) shouldBe Json.parse("""{"statusCode":400,"message":"bad request, cause: invalid json"}""")
-      }
-    }
   }
 }

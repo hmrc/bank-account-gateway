@@ -30,12 +30,21 @@ import scala.concurrent.ExecutionContext
 class BankAccountReputationController @Inject()(cc: ControllerComponents, config: AppConfig, connector: DownstreamConnector, val authConnector: AuthConnector)(implicit ec: ExecutionContext)
   extends BackendController(cc) with ToggledAuthorisedFunctions {
 
+  private val CORRELATION_ID_HEADER = "CorrelationId"
+
   def any(): Action[AnyContent] = Action.async { implicit request =>
     toggledAuthorised(config.rejectInternalTraffic, AuthProviders(StandardApplication, PrivilegedApplication)) {
+      val correlationId: Option[String] = request.headers.get(CORRELATION_ID_HEADER)
       val path = request.target.uri.toString.replace("bank-account-gateway", "bank-account-reputation")
       val url = s"${config.barsBaseUrl}$path"
 
       connector.forward(request, url, config.internalAuthToken)
+        .map { result =>
+          correlationId match {
+            case Some(id) => result.withHeaders(CORRELATION_ID_HEADER -> id)
+            case None     => result
+          }
+        }
     }
   }
 }
