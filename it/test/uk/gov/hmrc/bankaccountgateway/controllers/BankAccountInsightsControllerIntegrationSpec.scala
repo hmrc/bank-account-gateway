@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.bankaccountgateway
+package uk.gov.hmrc.bankaccountgateway.controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.apache.pekko.http.scaladsl.model.MediaTypes
@@ -51,9 +51,11 @@ class BankAccountInsightsControllerIntegrationSpec extends AnyWordSpec
   private val CORRELATION_ID_HEADER_NAME = "CorrelationId"
   private val testCorrelationId = "f0bd1f32-de51-45cc-9b18-0520d6e3ab1a"
 
-  "BankAccountInsightsController" should {
-    "respond with OK status" when {
-      "a valid json payload is provided" in {
+
+  "POST /check/insights" should {
+
+    "include the CorrelationId header" when {
+      "present in the initial request" in {
         externalWireMockServer.stubFor(
           post(urlEqualTo(s"/bank-account-insights/check/insights"))
             .withRequestBody(equalToJson("""{"sortCode":"123456", "accountNumber": "12345678"}"""))
@@ -79,15 +81,15 @@ class BankAccountInsightsControllerIntegrationSpec extends AnyWordSpec
       }
     }
 
-    "respond with BAD_REQUEST status" when {
-      "an invalid json payload is provided" in {
+    "exclude the CorrelationId header" when {
+      "missing from the initial request" in {
         externalWireMockServer.stubFor(
           post(urlEqualTo(s"/bank-account-insights/check/insights"))
             .withRequestBody(equalToJson("""{"sortCode":"123456", "accountNumber": "12345678"}"""))
             .withHeader(HeaderNames.CONTENT_TYPE, equalTo(MediaTypes.`application/json`.value))
             .willReturn(
               aResponse()
-                .withBody("""{"correlationId":"1234567809823498457", "risk": 0, "reason": "ACCOUNT_NOT_ON_WATCH_LIST"}""")
+                .withBody("""{"status":"VERIFIED", "code": "Phone verification code successfully sent"}""")
                 .withStatus(OK)
             )
         )
@@ -96,12 +98,14 @@ class BankAccountInsightsControllerIntegrationSpec extends AnyWordSpec
           wsClient
             .url(s"$baseUrl/check/insights")
             .withHttpHeaders(HeaderNames.CONTENT_TYPE -> MimeTypes.JSON)
-            .post("""{"sortCode":"123456", "accountNumber":"12345678}""")
+            .post(Json.parse("""{"sortCode":"123456", "accountNumber":"12345678"}"""))
             .futureValue
 
-        response.status shouldBe BAD_REQUEST
-        Json.parse(response.body) shouldBe Json.parse("""{"statusCode":400,"message":"bad request, cause: invalid json"}""")
+        response.status shouldBe OK
+        response.header(CORRELATION_ID_HEADER_NAME) shouldBe None
       }
     }
+
   }
+
 }

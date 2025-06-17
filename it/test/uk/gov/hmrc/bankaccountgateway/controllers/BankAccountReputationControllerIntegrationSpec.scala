@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.bankaccountgateway
+package uk.gov.hmrc.bankaccountgateway.controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.apache.pekko.http.scaladsl.model.MediaTypes
@@ -53,34 +53,9 @@ class BankAccountReputationControllerIntegrationSpec extends AnyWordSpec
 
   private val testCorrelationId = "f0bd1f32-de51-45cc-9b18-0520d6e3ab1a"
 
-  "BankAccountReputationController" should {
-    "respond with OK status" when {
-      "verifying a business account" in {
-        externalWireMockServer.stubFor(
-          post(urlEqualTo(s"/bank-account-reputation/verify/business"))
-            .withRequestBody(equalToJson("""{"sortCode":"123456", "accountNumber": "12345678"}"""))
-            .withHeader(HeaderNames.CONTENT_TYPE, equalTo(MediaTypes.`application/json`.value))
-            .withHeader(CORRELATION_ID_HEADER_NAME, equalTo(testCorrelationId)) // ensure correlation ID is passed to the downstream service
-            .willReturn(
-              aResponse()
-                .withBody("""{"status":"VERIFIED", "code": "Phone verification code successfully sent"}""")
-                .withStatus(OK)
-            )
-        )
-
-        val response =
-          wsClient
-            .url(s"$baseUrl/verify/business")
-            .withHttpHeaders(HeaderNames.CONTENT_TYPE -> MimeTypes.JSON)
-            .withHttpHeaders(CORRELATION_ID_HEADER_NAME -> testCorrelationId)
-            .post(Json.parse("""{"sortCode":"123456", "accountNumber":"12345678"}"""))
-            .futureValue
-
-        response.status shouldBe OK
-        response.header(CORRELATION_ID_HEADER_NAME) shouldBe Some(testCorrelationId) // ensure correlation ID is echoed back on the response
-      }
-
-      "verifying a personal account" in {
+  "POST /verify/personal" should {
+    "include the CorrelationId header" when {
+      "present in the initial request" in {
         externalWireMockServer.stubFor(
           post(urlEqualTo(s"/bank-account-reputation/verify/personal"))
             .withRequestBody(equalToJson("""{"sortCode":"123456", "accountNumber": "12345678"}"""))
@@ -106,6 +81,87 @@ class BankAccountReputationControllerIntegrationSpec extends AnyWordSpec
       }
     }
 
+    "exclude the CorrelationId header" when {
+      "missing from the initial request" in {
+        externalWireMockServer.stubFor(
+          post(urlEqualTo(s"/bank-account-reputation/verify/personal"))
+            .withRequestBody(equalToJson("""{"sortCode":"123456", "accountNumber": "12345678"}"""))
+            .withHeader(HeaderNames.CONTENT_TYPE, equalTo(MediaTypes.`application/json`.value))
+            .willReturn(
+              aResponse()
+                .withBody("""{"status":"VERIFIED", "code": "Phone verification code successfully sent"}""")
+                .withStatus(OK)
+            )
+        )
 
+        val response =
+          wsClient
+            .url(s"$baseUrl/verify/personal")
+            .withHttpHeaders(HeaderNames.CONTENT_TYPE -> MimeTypes.JSON)
+            .post(Json.parse("""{"sortCode":"123456", "accountNumber":"12345678"}"""))
+            .futureValue
+
+        response.status shouldBe OK
+        response.header(CORRELATION_ID_HEADER_NAME) shouldBe None
+
+      }
+    }
   }
+
+  "POST /verify/business" should {
+    "include the CorrelationId header" when {
+      "present in the initial request" in {
+        externalWireMockServer.stubFor(
+          post(urlEqualTo(s"/bank-account-reputation/verify/business"))
+            .withRequestBody(equalToJson("""{"sortCode":"123456", "accountNumber": "12345678"}"""))
+            .withHeader(HeaderNames.CONTENT_TYPE, equalTo(MediaTypes.`application/json`.value))
+            .withHeader(CORRELATION_ID_HEADER_NAME, equalTo(testCorrelationId)) // ensure correlation ID is passed to the downstream service
+            .willReturn(
+              aResponse()
+                .withBody("""{"status":"VERIFIED", "code": "Phone verification code successfully sent"}""")
+                .withStatus(OK)
+            )
+        )
+
+        val response =
+          wsClient
+            .url(s"$baseUrl/verify/business")
+            .withHttpHeaders(HeaderNames.CONTENT_TYPE -> MimeTypes.JSON)
+            .withHttpHeaders(CORRELATION_ID_HEADER_NAME -> testCorrelationId)
+            .post(Json.parse("""{"sortCode":"123456", "accountNumber":"12345678"}"""))
+            .futureValue
+
+        response.status shouldBe OK
+        response.header(CORRELATION_ID_HEADER_NAME) shouldBe Some(testCorrelationId) // ensure correlation ID is echoed back on the response
+      }
+    }
+
+    "exclude the CorrelationId header" when {
+      "missing from the initial request" in {
+        externalWireMockServer.stubFor(
+          post(urlEqualTo(s"/bank-account-reputation/verify/business"))
+            .withRequestBody(equalToJson("""{"sortCode":"123456", "accountNumber": "12345678"}"""))
+            .withHeader(HeaderNames.CONTENT_TYPE, equalTo(MediaTypes.`application/json`.value))
+            .willReturn(
+              aResponse()
+                .withBody("""{"status":"VERIFIED", "code": "Phone verification code successfully sent"}""")
+                .withStatus(OK)
+            )
+        )
+
+        val response =
+          wsClient
+            .url(s"$baseUrl/verify/business")
+            .withHttpHeaders(HeaderNames.CONTENT_TYPE -> MimeTypes.JSON)
+            .post(Json.parse("""{"sortCode":"123456", "accountNumber":"12345678"}"""))
+            .futureValue
+
+        response.status shouldBe OK
+        response.header(CORRELATION_ID_HEADER_NAME) shouldBe None
+
+      }
+    }
+  }
+
+
 }
