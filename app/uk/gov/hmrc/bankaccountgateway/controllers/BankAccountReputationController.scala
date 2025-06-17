@@ -20,7 +20,8 @@ import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthProvider.{PrivilegedApplication, StandardApplication}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthProviders}
 import uk.gov.hmrc.bankaccountgateway.config.AppConfig
-import uk.gov.hmrc.bankaccountgateway.{DownstreamConnector, ToggledAuthorisedFunctions}
+import uk.gov.hmrc.bankaccountgateway.ToggledAuthorisedFunctions
+import uk.gov.hmrc.bankaccountgateway.connectors.DownstreamConnector
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
