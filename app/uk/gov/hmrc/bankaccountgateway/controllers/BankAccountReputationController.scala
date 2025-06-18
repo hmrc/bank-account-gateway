@@ -20,7 +20,8 @@ import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthProvider.{PrivilegedApplication, StandardApplication}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthProviders}
 import uk.gov.hmrc.bankaccountgateway.config.AppConfig
-import uk.gov.hmrc.bankaccountgateway.{DownstreamConnector, ToggledAuthorisedFunctions}
+import uk.gov.hmrc.bankaccountgateway.ToggledAuthorisedFunctions
+import uk.gov.hmrc.bankaccountgateway.connectors.DownstreamConnector
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
@@ -30,12 +31,21 @@ import scala.concurrent.ExecutionContext
 class BankAccountReputationController @Inject()(cc: ControllerComponents, config: AppConfig, connector: DownstreamConnector, val authConnector: AuthConnector)(implicit ec: ExecutionContext)
   extends BackendController(cc) with ToggledAuthorisedFunctions {
 
+  private val CORRELATION_ID_HEADER = "CorrelationId"
+
   def any(): Action[AnyContent] = Action.async { implicit request =>
     toggledAuthorised(config.rejectInternalTraffic, AuthProviders(StandardApplication, PrivilegedApplication)) {
+      val correlationId: Option[String] = request.headers.get(CORRELATION_ID_HEADER)
       val path = request.target.uri.toString.replace("bank-account-gateway", "bank-account-reputation")
       val url = s"${config.barsBaseUrl}$path"
 
       connector.forward(request, url, config.internalAuthToken)
+        .map { result =>
+          correlationId match {
+            case Some(id) => result.withHeaders(CORRELATION_ID_HEADER -> id)
+            case None     => result
+          }
+        }
     }
   }
 }
