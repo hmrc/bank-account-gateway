@@ -39,7 +39,7 @@ class DownstreamConnector @Inject()(httpClient: HttpClientV2) {
 
     (request.method, request.headers(CONTENT_TYPE).toLowerCase()) match {
       case ("POST", "application/json") =>
-        val onwardHeaders = request.headers.remove(CONTENT_LENGTH, HOST, AUTHORIZATION).headers
+        val onwardHeaders = request.headers.remove(CONTENT_LENGTH, CONTENT_TYPE, HOST, AUTHORIZATION).headers
         implicit val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization(authToken)))
 
         try {
