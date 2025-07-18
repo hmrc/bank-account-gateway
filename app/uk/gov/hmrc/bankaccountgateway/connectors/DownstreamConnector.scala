@@ -38,8 +38,8 @@ class DownstreamConnector @Inject()(httpClient: HttpClientV2) {
     logger.info(s"Forwarding to downstream url: $url")
 
     (request.method, request.headers(CONTENT_TYPE).toLowerCase()) match {
-      case ("POST", "application/json") =>
-        val onwardHeaders = request.headers.remove(CONTENT_LENGTH, HOST, AUTHORIZATION).headers
+      case ("POST", MimeTypes.JSON) =>
+        val onwardHeaders = request.headers.remove(CONTENT_LENGTH, CONTENT_TYPE, HOST, AUTHORIZATION).headers
         implicit val hc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization(authToken)))
 
         try {
@@ -49,13 +49,10 @@ class DownstreamConnector @Inject()(httpClient: HttpClientV2) {
             .setHeader(onwardHeaders: _*)
             .execute[HttpResponse]
             .map { response: HttpResponse =>
-              val returnHeaders = response.headers
-                .filterNot { case (n, _) => n == CONTENT_TYPE || n == CONTENT_LENGTH }
-                .view.mapValues(x => x.mkString).toMap
-
               Result(
-                ResponseHeader(response.status, returnHeaders),
-                HttpEntity.Streamed(response.bodyAsSource, None, response.header(CONTENT_TYPE)))
+                ResponseHeader(response.status, cleanseResponseHeaders(response)),
+                HttpEntity.Streamed(response.bodyAsSource, None, response.header(CONTENT_TYPE))
+              )
             }.recoverWith { case t: Throwable =>
             Future.successful(BadGateway("{\"code\": \"REQUEST_DOWNSTREAM\", \"desc\": \"An issue occurred when the downstream service tried to handle the request\"}").as(MimeTypes.JSON))
           }
@@ -68,5 +65,10 @@ class DownstreamConnector @Inject()(httpClient: HttpClientV2) {
         Future.successful(MethodNotAllowed("{\"code\": \"UNSUPPORTED_METHOD\", \"desc\": \"Unsupported HTTP method or content-type\"}").as(MimeTypes.JSON))
     }
   }
+
+  private def cleanseResponseHeaders(response: HttpResponse): Map[String, String] =
+    response.headers
+      .filterNot { case (k, _) => Seq(CONTENT_TYPE, CONTENT_LENGTH, TRANSFER_ENCODING).map(_.toUpperCase).contains(k.toUpperCase) }
+      .view.mapValues(_.mkString).toMap
   
 }
