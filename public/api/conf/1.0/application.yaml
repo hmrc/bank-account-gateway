@@ -1,160 +1,302 @@
----
-openapi: "3.0.0"
+openapi: 3.0.0
 info:
-  title: "Bank Account"
-  version: "1.0.2"
+  title: Bank Account
+  version: 1.0.3
   contact:
-    name: "CIP Insights & Reputation Team"
-    email: "cip-insights-and-reputation-g@digital.hmrc.gov.uk"
+    name: CIP Insights & Reputation Team
+    email: cip-insights-and-reputation-g@digital.hmrc.gov.uk
+  description: "This API provides endpoints to verify bank account details and to\
+    \ get insights about a bank account. The API is designed to be used by HMRC services\
+    \ to validate personal and business bank accounts, ensuring that the provided\
+    \ details match valid bank accounts\n\n\n"
+  termsOfService: https://forms.office.com/Pages/ResponsePage.aspx?id=PPdSrBr9mkqOekokjzE54cRTj_GCzpRJqsT4amG0JK1UMkpBS1NUVDhWR041NjJWU0lCMVZUNk5NTi4u
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
 servers:
-  - url: "https://test-api.service.hmrc.gov.uk/misc/bank-account"
-    description: "Sandbox"
-  - url: "https://api.service.hmrc.gov.uk/misc/bank-account"
-    description: "Production"
+  - url: https://test-api.service.hmrc.gov.uk/misc/bank-account
+    description: Sandbox
+  - url: https://api.service.hmrc.gov.uk/misc/bank-account
+    description: Production
 paths:
   /check/insights:
     post:
-      summary: "Bank account insights"
-      description: "Get insights about a bank account\n"
-      operationId: "Bankaccountinsights"
+      summary: Bank account insights
+      description: Get insights about a bank account
+      operationId: Bankaccountinsights
       security:
         - applicationRestricted: []
       parameters: []
       requestBody:
-        description: ""
+        description: ''
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/MiscBankAccountCheckInsightsRequest"
+              $ref: '#/components/schemas/MiscBankAccountCheckInsightsRequest'
             example:
-              sortCode: "123456"
-              accountNumber: "12345678"
+              sortCode: '123456'
+              accountNumber: '12345678'
         required: true
       responses:
-        "200":
-          description: "Bank account insights"
+        '200':
+          description: Bank account insights
           headers: {}
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MiscBankAccountCheckInsightsResponse"
+                $ref: '#/components/schemas/MiscBankAccountCheckInsightsResponse'
               example:
-                correlationId: "1b817431-6a78-403c-a207-62eee9a593c1"
+                correlationId: 1b817431-6a78-403c-a207-62eee9a593c1
                 riskScore: 100
-                reason: "ACCOUNT_ON_WATCHLIST"
+                reason: ACCOUNT_ON_WATCHLIST
+        '400':
+          description: Bad Request
+          headers:
+            CorrelationId:
+              $ref: '#/components/headers/correlationId'
+          content:
+            application/json:
+              schema:
+                required:
+                  - origin
+                  - response
+                type: object
+                properties:
+                  origin: {}
+                  response:
+                    oneOf:
+                      - {}
+                      - $ref: '#/components/schemas/errorResponseBody'
+                additionalProperties: false
+              examples:
+                badRequest:
+                  $ref: '#/components/examples/errorResponseBodyExample'
+        '500':
+          description: Internal Server Error
+          headers:
+            CorrelationId:
+              $ref: '#/components/headers/correlationId'
+          content:
+            application/json:
+              schema:
+                required:
+                  - origin
+                  - response
+                type: object
+                properties:
+                  origin: {}
+                  response:
+                    oneOf:
+                      - {}
+                      - $ref: '#/components/schemas/error500ResponseBody'
+                additionalProperties: false
+              examples:
+                internalServerError:
+                  $ref: '#/components/examples/error500ResponseBodyExample'
+        '503':
+          description: Service Unavailable
+          content:
+            application/json;charset=UTF-8:
+              schema: {}
       deprecated: false
   /verify/personal:
     post:
-      summary: "Verify personal bank account details"
-      description: "Check if the provided personal bank account details match a valid\
-        \ bank account"
-      operationId: "Verifypersonalbankaccountdetails"
+      summary: Verify personal bank account details
+      description: Check if the provided personal bank account details match a valid
+        bank account
+      operationId: Verifypersonalbankaccountdetails
       security:
         - applicationRestricted: []
       parameters:
-        - name: "User-Agent"
-          in: "header"
-          description: "Calling service identifier"
+        - name: User-Agent
+          in: header
+          description: Calling service identifier
           required: true
-          style: "simple"
+          style: simple
           schema:
-            type: "string"
-            example: "calling-service"
+            type: string
+            example: calling-service
       requestBody:
-        description: "Personal verify request"
+        description: Personal verify request
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/MiscBankAccountVerifyPersonalRequest"
+              $ref: '#/components/schemas/MiscBankAccountVerifyPersonalRequest'
             example:
-              {
-                "account": {
-                  "sortCode": "991122",
-                  "accountNumber": "12345678"
-                },
-                "subject": {
-                  "title": "Mr",
-                  "name": "John Smith",
-                  "dob": "1970-12-31"
-                }
-              }
+              account:
+                sortCode: '991122'
+                accountNumber: '12345678'
+              subject:
+                title: Mr
+                name: John Smith
+                dob: '1970-12-31'
         required: true
       responses:
-        "200":
-          description: "Personal verify response"
+        '200':
+          description: Personal verify response
           headers: {}
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MiscBankAccountVerifyPersonalResponse"
+                $ref: '#/components/schemas/MiscBankAccountVerifyPersonalResponse'
               example:
-                {
-                  "accountNumberIsWellFormatted": "yes",
-                  "accountExists": "yes",
-                  "nameMatches": "partial",
-                  "accountName": "Mr Peter Smith",
-                  "nonStandardAccountDetailsRequiredForBacs": "no",
-                  "sortCodeIsPresentOnEISCD": "yes",
-                  "sortCodeSupportsDirectDebit":  "yes",
-                  "sortCodeSupportsDirectCredit": "yes",
-                  "iban": "GB25NWBK60080600724890"
-                }
+                accountNumberIsWellFormatted: 'yes'
+                accountExists: 'yes'
+                nameMatches: partial
+                accountName: Mr Peter Smith
+                nonStandardAccountDetailsRequiredForBacs: 'no'
+                sortCodeIsPresentOnEISCD: 'yes'
+                sortCodeSupportsDirectDebit: 'yes'
+                sortCodeSupportsDirectCredit: 'yes'
+                iban: GB25NWBK60080600724890
+        '400':
+          description: Bad Request
+          headers:
+            CorrelationId:
+              $ref: '#/components/headers/correlationId'
+          content:
+            application/json:
+              schema:
+                required:
+                  - origin
+                  - response
+                type: object
+                properties:
+                  origin: {}
+                  response:
+                    oneOf:
+                      - {}
+                      - $ref: '#/components/schemas/errorResponseBody'
+                additionalProperties: false
+              examples:
+                badRequest:
+                  $ref: '#/components/examples/errorResponseBodyExample'
+        '500':
+          description: Internal Server Error
+          headers:
+            CorrelationId:
+              $ref: '#/components/headers/correlationId'
+          content:
+            application/json:
+              schema:
+                required:
+                  - origin
+                  - response
+                type: object
+                properties:
+                  origin: {}
+                  response:
+                    oneOf:
+                      - {}
+                      - $ref: '#/components/schemas/error500ResponseBody'
+                additionalProperties: false
+              examples:
+                internalServerError:
+                  $ref: '#/components/examples/error500ResponseBodyExample'
+        '503':
+          description: Service Unavailable
+          content:
+            application/json;charset=UTF-8:
+              schema: {}
       deprecated: false
   /verify/business:
     post:
-      summary: "Verify business bank account details"
-      description: "Check if the provided business bank account details match a valid\
-        \ bank account"
-      operationId: "Verifybusinessbankaccountdetails"
+      summary: Verify business bank account details
+      description: Check if the provided business bank account details match a valid
+        bank account
+      operationId: Verifybusinessbankaccountdetails
       security:
         - applicationRestricted: []
       parameters:
-        - name: "User-Agent"
-          in: "header"
-          description: "Calling service identifier"
+        - name: User-Agent
+          in: header
+          description: Calling service identifier
           required: true
-          style: "simple"
+          style: simple
           schema:
-            type: "string"
-            example: "calling-service"
+            type: string
+            example: calling-service
       requestBody:
-        description: "Business verify request"
+        description: Business verify request
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/MiscBankAccountVerifyBusinessRequest"
+              $ref: '#/components/schemas/MiscBankAccountVerifyBusinessRequest'
             example:
-              {
-                "account": {
-                  "accountNumber": "14378881",
-                  "sortCode": "463509"
-                },
-                "business": {
-                  "companyName": "co ltd",
-                  "companyRegistrationNumber": "123456789"
-                }
-              }
+              account:
+                accountNumber: '14378881'
+                sortCode: '463509'
+              business:
+                companyName: co ltd
+                companyRegistrationNumber: '123456789'
         required: true
       responses:
-        "200":
-          description: "Business verify response"
+        '200':
+          description: Business verify response
           headers: {}
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MiscBankAccountVerifyBusinessResponse"
+                $ref: '#/components/schemas/MiscBankAccountVerifyBusinessResponse'
               example:
-                {
-                  "accountNumberIsWellFormatted": "yes",
-                  "nonStandardAccountDetailsRequiredForBacs": "no",
-                  "sortCodeBankName": "NATWEST",
-                  "sortCodeIsPresentOnEISCD": "yes",
-                  "sortCodeSupportsDirectDebit": "no",
-                  "sortCodeSupportsDirectCredit": "no",
-                  "iban": "GB25NWBK60080600724890",
-                  "accountExists": "yes",
-                  "nameMatches": "indeterminate"
-                }
+                accountNumberIsWellFormatted: 'yes'
+                nonStandardAccountDetailsRequiredForBacs: 'no'
+                sortCodeBankName: NATWEST
+                sortCodeIsPresentOnEISCD: 'yes'
+                sortCodeSupportsDirectDebit: 'no'
+                sortCodeSupportsDirectCredit: 'no'
+                iban: GB25NWBK60080600724890
+                accountExists: 'yes'
+                nameMatches: indeterminate
+        '400':
+          description: Bad Request
+          headers:
+            CorrelationId:
+              $ref: '#/components/headers/correlationId'
+          content:
+            application/json:
+              schema:
+                required:
+                  - origin
+                  - response
+                type: object
+                properties:
+                  origin: {}
+                  response:
+                    oneOf:
+                      - {}
+                      - $ref: '#/components/schemas/errorResponseBody'
+                additionalProperties: false
+              examples:
+                badRequest:
+                  $ref: '#/components/examples/errorResponseBodyExample'
+        '500':
+          description: Internal Server Error
+          headers:
+            CorrelationId:
+              $ref: '#/components/headers/correlationId'
+          content:
+            application/json:
+              schema:
+                required:
+                  - origin
+                  - response
+                type: object
+                properties:
+                  origin: {}
+                  response:
+                    oneOf:
+                      - {}
+                      - $ref: '#/components/schemas/error500ResponseBody'
+                additionalProperties: false
+              examples:
+                internalServerError:
+                  $ref: '#/components/examples/error500ResponseBodyExample'
+        '503':
+          description: Service Unavailable
+          content:
+            application/json;charset=UTF-8:
+              schema: {}
       deprecated: false
 components:
   securitySchemes:
@@ -170,421 +312,365 @@ components:
           scopes: {}
   schemas:
     MiscBankAccountCheckInsightsResponse:
-      title: "MiscBankAccountCheckInsightsResponse"
+      title: MiscBankAccountCheckInsightsResponse
       required:
-        - "correlationId"
-        - "riskScore"
-        - "reason"
-      type: "object"
+        - correlationId
+        - riskScore
+        - reason
+      type: object
       properties:
         correlationId:
-          type: "string"
-          description: "A unique `UUID` to allow the request/response to be tracked"
+          description: A unique `UUID` to allow the request/response to be tracked
+          type: string
         riskScore:
+          description: Risk score
           maximum: 100
           minimum: 0
-          type: "number"
-          description: "Risk score"
+          type: number
         reason:
-          type: "string"
-          description: "Reason for risk score"
+          description: Reason for risk score
+          maxLength: 100
+          type: string
     MiscBankAccountCheckInsightsRequest:
-      title: "MiscBankAccountCheckInsightsRequest"
+      title: MiscBankAccountCheckInsightsRequest
       required:
-        - "sortCode"
-        - "accountNumber"
-      type: "object"
+        - sortCode
+        - accountNumber
+      type: object
       properties:
         sortCode:
+          description: The sort code for the bank account
           maxLength: 6
           minLength: 6
-          type: "string"
-          description: "The sort code for the bank account"
+          type: string
         accountNumber:
+          description: Account number for the bank account (Account numbers with a
+            length less than 8 digits should be prefixed with zeros to pad it up to
+            8 digits, e.g. 00123456)
           maxLength: 8
           minLength: 8
-          type: "string"
-          description: "Account number for the bank account (Account numbers with\
-            \ a length less than 8 digits should be prefixed with zeros to pad it\
-            \ up to 8 digits, e.g. 00123456)"
+          type: string
     MiscBankAccountVerifyPersonalRequest:
-      title: "VerifyPersonalRequest"
-      type: "object"
+      title: VerifyPersonalRequest
       required:
-        - "account"
-        - "subject"
+        - account
+        - subject
+      type: object
       properties:
         account:
-          type: "object"
           required:
-            - "accountNumber"
-            - "sortCode"
+            - accountNumber
+            - sortCode
+          type: object
           properties:
             accountNumber:
-              description: "The bank account number, 8 digits long"
-              type: "string"
+              description: The bank account number, 8 digits long
+              maxLength: 8
+              minLength: 8
+              type: string
               example:
-                - "79499414"
-                - "07336121"
+                - '79499414'
+                - '07336121'
             sortCode:
-              description: "The bank sort code, 6 digits long (whitespace and/or dashes should be removed)"
-              type: "string"
+              description: The bank sort code, 6 digits long (whitespace and/or dashes
+                should be removed)
+              maxLength: 6
+              minLength: 6
+              type: string
               example:
-                - "832237"
+                - '832237'
         subject:
-          type: "object"
-          description: "Subject"
+          description: Subject
           required:
-            - "name"
+            - name
+          type: object
           properties:
             name:
-              description: "The subjects full name. This should include first and last names. Title is optional."
-              type: "string"
+              description: The subjects full name. This should include first and last
+                names. Title is optional.
+              maxLength: 100
+              type: string
               example:
-                - "Mr Joe Bloggs"
+                - Mr Joe Bloggs
     MiscBankAccountVerifyPersonalResponse:
-      title: "VerifyPersonalResponse"
-      type: "object"
+      title: VerifyPersonalResponse
       required:
-        - "accountNumberIsWellFormatted"
-        - "nonStandardAccountDetailsRequiredForBacs"
-        - "sortCodeIsPresentOnEISCD"
-        - "sortCodeSupportsDirectDebit"
-        - "sortCodeSupportsDirectCredit"
-        - "accountExists"
-        - "nameMatches"
+        - accountNumberIsWellFormatted
+        - nonStandardAccountDetailsRequiredForBacs
+        - sortCodeIsPresentOnEISCD
+        - sortCodeSupportsDirectDebit
+        - sortCodeSupportsDirectCredit
+        - accountExists
+        - nameMatches
+      type: object
       properties:
         accountNumberIsWellFormatted:
-          description: "Account number with sortcode is valid"
-          type: "string"
-          oneOf:
-            - enum:
-                - "yes"
-              description: "The sort code is known and the sort code and account number are correctly formatted and their contents pass our checks"
-            - enum:
-                - "no"
-              description: "The sort code is known but the account number and sort code combination did not pass our checks"
-            - enum:
-                - "indeterminate"
-              description: "The sort code is unknown, it may be valid but more likely will not resolve to an addressable bank account"
-            - enum:
-                - "error"
-              description: "There was an error attempting to perform a modulus check"
-          example:
-            - "no"
+          $ref: '#/components/schemas/accountNumberIsWellFormattedEnum'
         nonStandardAccountDetailsRequiredForBacs:
-          description: "Non-standard account details required for BACS"
-          type: "string"
-          oneOf:
-            - enum:
-                - "yes"
-              description: "Indicates that a BACS transaction for this account will require additional information (e.g. a Building Society roll number)"
-            - enum:
-                - "no"
-              description: "Indicates that a BACS transaction for this account will NOT require additional information (e.g. a Building Society roll number)"
-            - enum:
-                - "inapplicable"
-              description: "The sort code and/or account number failed initial validation, and so no further checks were made"
-            - enum:
-                - "error"
-              description: "There was an error when checking if branch requires non-standard details"
-          example:
-            - "inapplicable"
+          $ref: '#/components/schemas/nonStandardAccountDetailsRequiredForBacsEnum'
         sortCodeBankName:
-          description: "Sortcode bank name"
-          type: "string"
+          description: Sort code bank name
+          maxLength: 100
+          type: string
           example:
-            - "THE ROYAL BANK OF SCOTLAND PLC"
+            - THE ROYAL BANK OF SCOTLAND PLC
         sortCodeIsPresentOnEISCD:
-          description: "Sortcode is present on EISCD"
-          type: "string"
-          oneOf:
-            - enum:
-                - "yes"
-              description: "The sort code given was found by the service"
-            - enum:
-                - "no"
-              description: "The sort code given was NOT found by the service"
-            - enum:
-                - "error"
-              description: "There was an error checking the EISCD data"
-          example:
-            - "yes"
+          $ref: '#/components/schemas/sortCodeIsPresentOnEISCDEnum'
         sortCodeSupportsDirectDebit:
-          description: "Whether sortcode supports direct debit payment and setup"
-          type: "string"
-          oneOf:
-            - enum:
-                - "yes"
-              description: "The sort code supports direct debit payment and setup"
-            - enum:
-                - "no"
-              description: "The sort code does not support direct debit payment or setup"
-            - enum:
-                - "error"
-              description: "There was an error checking the EISCD data"
-          example:
-            - "no"
+          $ref: '#/components/schemas/sortCodeSupportsDirectDebitEnum'
         sortCodeSupportsDirectCredit:
-          description: "Whether sortcode supports direct credit payment"
-          type: "string"
-          oneOf:
-            - enum:
-                - "yes"
-              description: "The sort code supports direct credit payment"
-            - enum:
-                - "no"
-              description: "The sort code does not support direct credit payment"
-            - enum:
-                - "error"
-              description: "There was an error checking the EISCD data"
-          example:
-            - "no"
+          $ref: '#/components/schemas/sortCodeSupportsDirectCreditEnum'
         iban:
-          description: "The IBAN for the given account number / sort code"
-          type: "string"
+          description: The IBAN for the given account number / sort code
+          maxLength: 100
+          type: string
           example:
-            - "GB25NWBK60080600724890"
+            - GB25NWBK60080600724890
         accountExists:
-          description: "Account exists"
-          type: "string"
-          oneOf:
-            - enum:
-                - "yes"
-              description: "The sort code and account number relate to a bank account stored in the third party service"
-            - enum:
-                - "no"
-              description: "The third party service asserted that the account number was not valid for the given sort code"
-            - enum:
-                - "indeterminate"
-              description: "The sort code and account number were not found in the third party service"
-            - enum:
-                - "inapplicable"
-              description: "The sort code and/or account number failed initial validation, and so no further checks were made"
-            - enum:
-                - "error"
-              description: "There was an error calling the third party service"
-          example:
-            - "indeterminate"
+          $ref: '#/components/schemas/accountExistsEnum'
         nameMatches:
-          description: "Name matches"
-          type: "string"
-          oneOf:
-            - enum:
-                - "yes"
-              description: "The provided subject name was found to match the account holder name stored by the third party service"
-            - enum:
-                - "no"
-              description: "No match was found for the provided subject name in the third party service"
-            - enum:
-                - "partial"
-              description: "After normalisation, the provided business name was found to be a close match to the one stored by the third party service E.g 'Mr P Smith' vs 'Mr Peter Smith'."
-            - enum:
-                - "indeterminate"
-              description: "The sort code and account number did not resolve to an account stored in the third party service"
-            - enum:
-                - "inapplicable"
-              description: "The sort code and/or account number failed initial validation, and so no further checks were made"
-            - enum:
-                - "error"
-              description: "There was an error calling the third party service"
-          example:
-            - "no"
+          $ref: '#/components/schemas/nameMatchesEnum'
         accountName:
-          description: "In the case of a partial name match, this will be the name on the account as reported by the third party"
-          type: "string"
+          description: In the case of a partial name match, this will be the name
+            on the account as reported by the third party
+          maxLength: 100
+          type: string
           example:
-            - "Mr Peter Smith"
+            - Mr Peter Smith
     MiscBankAccountVerifyBusinessRequest:
-      title: "VerifyBusinessRequest"
-      type: "object"
+      title: VerifyBusinessRequest
       required:
-        - "account"
-        - "business"
+        - account
+        - business
+      type: object
       properties:
         account:
-          description: "Account"
-          type: "object"
+          description: Account
           required:
-            - "accountNumber"
-            - "sortCode"
+            - accountNumber
+            - sortCode
+          type: object
           properties:
             accountNumber:
-              title: "Account Number"
-              description: "The bank account number, 8 characters long"
-              type: "string"
+              title: Account Number
+              description: The bank account number, 8 characters long
+              maxLength: 8
+              type: string
               example:
-                - "14378881"
-                - "07336121"
+                - '14378881'
+                - '07336121'
             sortCode:
-              title: "Sortcode"
-              description: "The bank sort code, 6 characters long (whitespace and/or dashes should be removed)"
-              type: "string"
+              title: Sortcode
+              description: The bank sort code, 6 characters long (whitespace and/or
+                dashes should be removed)
+              maxLength: 6
+              type: string
               example:
-                - "463509"
+                - '463509'
         business:
-          description: "Business"
-          type: "object"
+          description: Business
           required:
-            - "companyName"
+            - companyName
+          type: object
           properties:
             companyName:
-              title: "Companyname"
-              description: "The account name provided to the bank (usually the same as the registered company name, but with complex company setups this may not be true)"
-              type: "string"
+              title: Companyname
+              description: The account name provided to the bank (usually the same
+                as the registered company name, but with complex company setups this
+                may not be true)
+              maxLength: 100
+              type: string
               example:
-                - "co ltd"
+                - co ltd
     MiscBankAccountVerifyBusinessResponse:
-      title: "VerifyBusinessResponse"
-      type: "object"
+      title: VerifyBusinessResponse
       required:
-        - "accountNumberIsWellFormatted"
-        - "nonStandardAccountDetailsRequiredForBacs"
-        - "sortCodeIsPresentOnEISCD"
-        - "sortCodeSupportsDirectDebit"
-        - "sortCodeSupportsDirectCredit"
-        - "accountExists"
-        - "nameMatches"
+        - accountNumberIsWellFormatted
+        - nonStandardAccountDetailsRequiredForBacs
+        - sortCodeIsPresentOnEISCD
+        - sortCodeSupportsDirectDebit
+        - sortCodeSupportsDirectCredit
+        - accountExists
+        - nameMatches
+      type: object
       properties:
         accountNumberIsWellFormatted:
-          description: "Account number has been checked and it is well formatted"
-          type: "string"
-          oneOf:
-            - enum:
-                - "yes"
-              description: "The sort code is known and the sort code and account number are correctly formatted and their contents pass our implementation of the BACS standard modulus check"
-            - enum:
-                - "no"
-              description: "The sort code is known but the account number and sort code combination did not pass out implementation of the BACS standard modulus check"
-            - enum:
-                - "indeterminate"
-              description: "The sort code is unknown and would not resolve to an addressable bank account, therefore it cannot be mod checked"
-            - enum:
-                - "error"
-              description: "There was an error attempting to perform a modulus check"
-          example:
-            - "indeterminate"
+          $ref: '#/components/schemas/accountNumberIsWellFormattedEnum'
         nonStandardAccountDetailsRequiredForBacs:
-          description: "Non-standard account details required for BACS"
-          type: "string"
-          oneOf:
-            - enum:
-                - "yes"
-              description: "Indicates that a BACS transaction for this account will require additional information (e.g. a Building Society roll number)"
-            - enum:
-                - "no"
-              description: "Indicates that a BACS transaction for this account will NOT require additional information (e.g. a Building Society roll number)."
-            - enum:
-                - "inapplicable"
-              description: "The sort code and/or account number failed initial validation, and so no further checks were made"
-            - enum:
-                - "error"
-              description: "There was an error when checking if branch requires non-standard details"
-          example:
-            - "no"
+          $ref: '#/components/schemas/nonStandardAccountDetailsRequiredForBacsEnum'
         sortCodeBankName:
-          description: "Bank name associated with sort code"
-          type: "string"
+          description: Bank name associated with sort code
+          maxLength: 100
+          type: string
           example:
-            - "NATWEST"
+            - NATWEST
         sortCodeIsPresentOnEISCD:
-          description: "Sortcode is present on EISCD"
-          type: "string"
-          oneOf:
-            - enum:
-                - "yes"
-              description: "The sort code exists in the EISCD database"
-            - enum:
-                - "no"
-              description: "The sort code does not exist in the EISCD"
-            - enum:
-                - "error"
-              description: "There was an error calling the third party service"
-          example:
-            - "no"
+          $ref: '#/components/schemas/sortCodeIsPresentOnEISCDEnum'
         sortCodeSupportsDirectDebit:
-          description: "Whether sortcode supports direct debit payment and setup"
-          type: "string"
-          oneOf:
-            - enum:
-                - "yes"
-              description: "The sort code supports direct debit payment and setup"
-            - enum:
-                - "no"
-              description: "The sort code does not support direct debit payment or setup"
-            - enum:
-                - "error"
-              description: "There was an error checking the eiscd data"
-          example:
-            - "no"
+          $ref: '#/components/schemas/sortCodeSupportsDirectDebitEnum'
         sortCodeSupportsDirectCredit:
-          description: "Whether sortcode supports direct credit payment"
-          type: "string"
-          oneOf:
-            - enum:
-                - "yes"
-              description: "The sort code supports direct credit payment"
-            - enum:
-                - "no"
-              description: "The sort code does not support direct credit payment"
-            - enum:
-                - "error"
-              description: "There was an error checking the eiscd data"
-          example:
-            - "no"
+          $ref: '#/components/schemas/sortCodeSupportsDirectCreditEnum'
         iban:
-          description: "The IBAN for the given account number / sort code"
-          type: "string"
+          description: The IBAN for the given account number / sort code
+          maxLength: 100
+          type: string
           example:
-            - "GB25NWBK60080600724890"
+            - GB25NWBK60080600724890
         accountExists:
-          description: "Account exists"
-          type: "string"
-          oneOf:
-            - enum:
-                - "yes"
-              description: "The sort code and account number relate to a bank account stored in the third party service"
-            - enum:
-                - "no"
-              description: "The third party service asserted that the account number was not valid for the given sort code"
-            - enum:
-                - "indeterminate"
-              description: "The sort code and account number were not found in the third party service"
-            - enum:
-                - "inapplicable"
-              description: "The sort code and/or account number failed initial validation, and so no further checks were made"
-            - enum:
-                - "error"
-              description: "There was an error checking the third party service"
-          example:
-            - "inapplicable"
+          $ref: '#/components/schemas/accountExistsEnum'
         nameMatches:
-          description: "Name matches"
-          type: "string"
-          oneOf:
-            - enum:
-                - "yes"
-              description: "After normalisation, the provided business name was found to match one stored by the third party service"
-            - enum:
-                - "no"
-              description: "After normalisation, no match was found for the provided business name in the third party service"
-            - enum:
-                - "partial"
-              description: "After normalisation, the provided business name was found to be a close match to the one stored by the third party service E.g\
-              \ 'ACME inc' vs 'ACME incorporated'."
-            - enum:
-                - "indeterminate"
-              description: "The sort code and account number did not resolve to an account stored in the third party service"
-            - enum:
-                - "inapplicable"
-              description: "The sort code and/or account number failed initial validation, and so no further checks were made"
-            - enum:
-                - "error"
-              description: "There was an error checking the third party service"
-          example:
-            - "inapplicable"
+          $ref: '#/components/schemas/nameMatchesEnum'
         accountName:
-          description: "In the case of a partial name match, this will be the name on the account as reported by the third party"
-          type: "string"
+          description: In the case of a partial name match, this will be the name
+            on the account as reported by the third party
+          maxLength: 100
+          type: string
           example:
-            - "ACME Inc"
+            - ACME Inc
+    correlationId:
+      format: uuid
+      description: Correlation ID - used for end to end traceability
+      pattern: ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$
+      type: string
+      example: 290jij88-8fya-hf82-g893-fhi98410fk22
+    accountNumberIsWellFormattedEnum:
+      description: "Account number with sort code is valid:\n * `yes` - The sort code\
+        \ is known and the sort code and account number are correctly formatted and\
+        \ their contents pass our checks\n * `no` - The sort code is known but the\
+        \ account number and sort code combination did not pass our checks\n * `indeterminate`\
+        \ - The sort code is unknown, it may be valid but more likely will not resolve\
+        \ to an addressable bank account\n * `error` - There was an error attempting\
+        \ to perform a modulus check\n"
+      enum:
+        - 'yes'
+        - 'no'
+        - indeterminate
+        - error
+      type: string
+    nonStandardAccountDetailsRequiredForBacsEnum:
+      description: "Non-standard account details required for BACS:\n * `yes` - Indicates\
+        \ that a BACS transaction for this account will require additional information\
+        \ (e.g. a Building Society roll number)\n * `no` - Indicates that a BACS transaction\
+        \ for this account will NOT require additional information (e.g. a Building\
+        \ Society roll number)\n * `inapplicable` - The sort code and/or account number\
+        \ failed initial validation, and so no further checks were made\n * `error`\
+        \ - There was an error when checking if branch requires non-standard details\n"
+      enum:
+        - 'yes'
+        - 'no'
+        - inapplicable
+        - error
+      type: string
+    sortCodeIsPresentOnEISCDEnum:
+      description: "Sortcode is present on EISCD:\n * `yes` - The sort code given\
+        \ was found by the service\n * `no` - The sort code given was NOT found by\
+        \ the service\n * `error` - There was an error checking the EISCD data\n"
+      enum:
+        - 'yes'
+        - 'no'
+        - error
+      type: string
+    sortCodeSupportsDirectDebitEnum:
+      description: "Whether sortcode supports direct debit payment and setup:\n *\
+        \ `yes` - The sort code supports direct debit payment and setup\n * `no` -\
+        \ The sort code does not support direct debit payment or setup\n * `error`\
+        \ - There was an error checking the EISCD data\n"
+      enum:
+        - 'yes'
+        - 'no'
+        - error
+      type: string
+    sortCodeSupportsDirectCreditEnum:
+      description: "Whether sortcode supports direct credit payment:\n * `yes` - The\
+        \ sort code supports direct credit payment\n * `no` - The sort code does not\
+        \ support direct credit payment\n * `error` - There was an error checking\
+        \ the EISCD data\n"
+      enum:
+        - 'yes'
+        - 'no'
+        - error
+      type: string
+    accountExistsEnum:
+      description: "Account exists:\n * `yes` - The sort code and account number relate\
+        \ to a bank account stored in the third party service\n * `no` - The third\
+        \ party service asserted that the account number was not valid for the given\
+        \ sort code\n * `indeterminate` - The sort code and account number were not\
+        \ found in the third party service\n * `inapplicable` - The sort code and/or\
+        \ account number failed initial validation, and so no further checks were\
+        \ made\n * `error` - There was an error calling the third party service\n"
+      enum:
+        - 'yes'
+        - 'no'
+        - indeterminate
+        - inapplicable
+        - error
+      type: string
+    nameMatchesEnum:
+      description: "Name matches:\n * `yes` - The provided subject name was found\
+        \ to match the account holder name stored by the third party service\n * `no`\
+        \ - No match was found for the provided subject name in the third party service\n\
+        \ * `partial` - After normalisation, the provided business name was found\
+        \ to be a close match to the one stored by the third party service E.g 'Mr\
+        \ P Smith' vs 'Mr Peter Smith'.\n * `indeterminate` - The sort code and account\
+        \ number did not resolve to an account stored in the third party service\n\
+        \ * `inapplicable` - The sort code and/or account number failed initial validation,\
+        \ and so no further checks were made\n * `error` - There was an error calling\
+        \ the third party service\n"
+      enum:
+        - 'yes'
+        - 'no'
+        - partial
+        - indeterminate
+        - inapplicable
+        - error
+      type: string
+    errorResponseBody:
+      title: Error response body
+      type: object
+      properties:
+        error:
+          description: error
+          type: string
+    error500ResponseBody:
+      title: Error 500 response body
+      type: object
+      properties:
+        error:
+          description: error
+          type: string
+  parameters:
+    correlationId:
+      name: CorrelationId
+      in: header
+      description: Correlation ID - used for end to end traceability
+      required: true
+      schema:
+        maxLength: 36
+        minLength: 8
+        pattern: ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$
+        type: string
+        example: 290jij88-8fya-hf82-g893-fhi98410fk22
+    userAgent:
+      name: User-Agent
+      in: header
+      description: Calling service identifier
+      required: true
+      schema:
+        maxLength: 50
+        minLength: 1
+        type: string
+        example: calling-service
+  headers:
+    correlationId:
+      required: true
+      schema:
+        $ref: '#/components/schemas/correlationId'
+  examples:
+    errorResponseBodyExample:
+      value:
+        error: '{code: REQUEST_DOWNSTREAM, desc: An issue occurred when the downstream
+          service tried to handle the request}'
+    error500ResponseBodyExample:
+      value:
+        error: '{code: REQUEST_DOWNSTREAM, desc: An issue occurred when the downstream
+          service tried to handle the request}'
