@@ -8,13 +8,7 @@ info:
   description: "This API provides endpoints to verify bank account details and to\
     \ get insights about a bank account. The API is designed to be used by HMRC services\
     \ to validate personal and business bank accounts, ensuring that the provided\
-    \ details match valid bank accounts\n\n\n ```\n\nChange Log\n```\n\n  | Version\
-    \ | Date | Author | Description |\n  |---|-----|------|-----|\n  | 1.0.0 | 28-05-2025\
-    \ | Graham Cook | Initial draft of bank account API specification|\n  | 1.0.1\
-    \ | 17-06-2025 | Graham Cook | Update from EIS review|\n  | 1.0.2 | 23-06-2025\
-    \ | Graham Cook | Update from, EIS review|\n  | 1.0.3 | 01-07-2025 | Graham Cook\
-    \ | Update to point to MDTP HOD|\n  | ?.?.? | dd-mm-yyyy | Change Owner Name |\
-    \ Details of next version |"
+    \ details match valid bank accounts\n\n\n"
   termsOfService: https://forms.office.com/Pages/ResponsePage.aspx?id=PPdSrBr9mkqOekokjzE54cRTj_GCzpRJqsT4amG0JK1UMkpBS1NUVDhWR041NjJWU0lCMVZUNk5NTi4u
   license:
     name: Apache 2.0
