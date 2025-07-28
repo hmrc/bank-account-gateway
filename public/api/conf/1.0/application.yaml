@@ -57,20 +57,27 @@ paths:
           content:
             application/json:
               schema:
-                required:
-                  - origin
-                  - response
                 type: object
                 properties:
-                  origin: {}
-                  response:
-                    oneOf:
-                      - {}
-                      - $ref: '#/components/schemas/errorResponseBody'
-                additionalProperties: false
+                  /sortCode:
+                    type: array
+                    items:
+                      type: string
+                  /accountNumber:
+                    type: array
+                    items:
+                      type: string
               examples:
-                badRequest:
-                  $ref: '#/components/examples/errorResponseBodyExample'
+                sortCodeInvalid:
+                  value:
+                    /sortCode: ["expected a string with 6 digits"]
+                accountNumberInvalid:
+                  value:
+                    /accountNumber: ["expected a string with 8 digits"]
+                bothInvalid:
+                  value:
+                    /sortCode: ["expected a string with 6 digits"]
+                    /accountNumber: [ "expected a string with 8 digits" ]
         '500':
           description: Internal Server Error
           headers:
@@ -79,25 +86,19 @@ paths:
           content:
             application/json:
               schema:
-                required:
-                  - origin
-                  - response
-                type: object
-                properties:
-                  origin: {}
-                  response:
-                    oneOf:
-                      - {}
-                      - $ref: '#/components/schemas/error500ResponseBody'
-                additionalProperties: false
-              examples:
-                internalServerError:
-                  $ref: '#/components/examples/error500ResponseBodyExample'
+                $ref: '#/components/schemas/insightsErrorResponse'
+              example:
+                statusCode: 500
+                message: An Internal Server Error occurred
         '503':
           description: Service Unavailable
           content:
-            application/json;charset=UTF-8:
-              schema: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/insightsErrorResponse'
+              example:
+                statusCode: 503
+                message: A dependent service is currently unavailable
       deprecated: false
   /verify/personal:
     post:
@@ -157,20 +158,10 @@ paths:
           content:
             application/json:
               schema:
-                required:
-                  - origin
-                  - response
-                type: object
-                properties:
-                  origin: {}
-                  response:
-                    oneOf:
-                      - {}
-                      - $ref: '#/components/schemas/errorResponseBody'
-                additionalProperties: false
+                $ref: '#/components/schemas/verifyErrorResponse'
               examples:
-                badRequest:
-                  $ref: '#/components/examples/errorResponseBodyExample'
+                verifyError:
+                  $ref: '#/components/examples/verifyError'
         '500':
           description: Internal Server Error
           headers:
@@ -179,25 +170,19 @@ paths:
           content:
             application/json:
               schema:
-                required:
-                  - origin
-                  - response
-                type: object
-                properties:
-                  origin: {}
-                  response:
-                    oneOf:
-                      - {}
-                      - $ref: '#/components/schemas/error500ResponseBody'
-                additionalProperties: false
+                $ref: '#/components/schemas/verifyErrorResponse'
               examples:
-                internalServerError:
-                  $ref: '#/components/examples/error500ResponseBodyExample'
+                verifyError:
+                  $ref: '#/components/examples/verifyError'
         '503':
           description: Service Unavailable
           content:
-            application/json;charset=UTF-8:
-              schema: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/verifyErrorResponse'
+              examples:
+                verifyError:
+                  $ref: '#/components/examples/verifyError'
       deprecated: false
   /verify/business:
     post:
@@ -256,20 +241,10 @@ paths:
           content:
             application/json:
               schema:
-                required:
-                  - origin
-                  - response
-                type: object
-                properties:
-                  origin: {}
-                  response:
-                    oneOf:
-                      - {}
-                      - $ref: '#/components/schemas/errorResponseBody'
-                additionalProperties: false
+                $ref: '#/components/schemas/verifyErrorResponse'
               examples:
-                badRequest:
-                  $ref: '#/components/examples/errorResponseBodyExample'
+                verifyError:
+                  $ref: '#/components/examples/verifyError'
         '500':
           description: Internal Server Error
           headers:
@@ -278,25 +253,19 @@ paths:
           content:
             application/json:
               schema:
-                required:
-                  - origin
-                  - response
-                type: object
-                properties:
-                  origin: {}
-                  response:
-                    oneOf:
-                      - {}
-                      - $ref: '#/components/schemas/error500ResponseBody'
-                additionalProperties: false
+                $ref: '#/components/schemas/verifyErrorResponse'
               examples:
-                internalServerError:
-                  $ref: '#/components/examples/error500ResponseBodyExample'
+                verifyError:
+                  $ref: '#/components/examples/verifyError'
         '503':
           description: Service Unavailable
           content:
-            application/json;charset=UTF-8:
-              schema: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/verifyErrorResponse'
+              examples:
+                verifyError:
+                  $ref: '#/components/examples/verifyError'
       deprecated: false
 components:
   securitySchemes:
@@ -624,19 +593,25 @@ components:
         - inapplicable
         - error
       type: string
-    errorResponseBody:
-      title: Error response body
+    verifyErrorResponse:
+      title: Verify Bank Account error response schema
       type: object
       properties:
-        error:
-          description: error
+        code:
+          description: Error Code
           type: string
-    error500ResponseBody:
-      title: Error 500 response body
+        desc:
+          description: Error Description
+          type: string
+    insightsErrorResponse:
+      title: Insights error response schema
       type: object
       properties:
-        error:
-          description: error
+        statusCode:
+          description: Error Code
+          type: integer
+        message:
+          description: Error Description
           type: string
   parameters:
     correlationId:
@@ -666,11 +641,7 @@ components:
       schema:
         $ref: '#/components/schemas/correlationId'
   examples:
-    errorResponseBodyExample:
+    verifyError:
       value:
-        error: '{code: REQUEST_DOWNSTREAM, desc: An issue occurred when the downstream
-          service tried to handle the request}'
-    error500ResponseBodyExample:
-      value:
-        error: '{code: REQUEST_DOWNSTREAM, desc: An issue occurred when the downstream
-          service tried to handle the request}'
+        code: REQUEST_DOWNSTREAM
+        desc: An issue occurred when the downstream service tried to handle the request
