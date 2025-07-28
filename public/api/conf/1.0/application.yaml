@@ -57,10 +57,27 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/errorResponseBody'
+                type: object
+                properties:
+                  /sortCode:
+                    type: array
+                    items:
+                      type: string
+                  /accountNumber:
+                    type: array
+                    items:
+                      type: string
               examples:
-                exampleError:
-                  $ref: '#/components/examples/exampleError'
+                sortCodeInvalid:
+                  value:
+                    /sortCode: ["expected a string with 6 digits"]
+                accountNumberInvalid:
+                  value:
+                    /accountNumber: ["expected a string with 8 digits"]
+                bothInvalid:
+                  value:
+                    /sortCode: ["expected a string with 6 digits"]
+                    /accountNumber: [ "expected a string with 8 digits" ]
         '500':
           description: Internal Server Error
           headers:
@@ -69,19 +86,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/errorResponseBody'
-              examples:
-                exampleError:
-                  $ref: '#/components/examples/exampleError'
+                $ref: '#/components/schemas/insightsErrorResponse'
+              example:
+                statusCode: 500
+                message: An Internal Server Error occurred
         '503':
           description: Service Unavailable
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/errorResponseBody'
-              examples:
-                exampleError:
-                  $ref: '#/components/examples/exampleError'
+                $ref: '#/components/schemas/insightsErrorResponse'
+              example:
+                statusCode: 503
+                message: A dependent service is currently unavailable
       deprecated: false
   /verify/personal:
     post:
@@ -141,10 +158,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/errorResponseBody'
+                $ref: '#/components/schemas/verifyErrorResponse'
               examples:
-                exampleError:
-                  $ref: '#/components/examples/exampleError'
+                verifyError:
+                  $ref: '#/components/examples/verifyError'
         '500':
           description: Internal Server Error
           headers:
@@ -153,19 +170,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/errorResponseBody'
+                $ref: '#/components/schemas/verifyErrorResponse'
               examples:
-                exampleError:
-                  $ref: '#/components/examples/exampleError'
+                verifyError:
+                  $ref: '#/components/examples/verifyError'
         '503':
           description: Service Unavailable
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/errorResponseBody'
+                $ref: '#/components/schemas/verifyErrorResponse'
               examples:
-                exampleError:
-                  $ref: '#/components/examples/exampleError'
+                verifyError:
+                  $ref: '#/components/examples/verifyError'
       deprecated: false
   /verify/business:
     post:
@@ -224,10 +241,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/errorResponseBody'
+                $ref: '#/components/schemas/verifyErrorResponse'
               examples:
-                exampleError:
-                  $ref: '#/components/examples/exampleError'
+                verifyError:
+                  $ref: '#/components/examples/verifyError'
         '500':
           description: Internal Server Error
           headers:
@@ -236,19 +253,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/errorResponseBody'
+                $ref: '#/components/schemas/verifyErrorResponse'
               examples:
-                exampleError:
-                  $ref: '#/components/examples/exampleError'
+                verifyError:
+                  $ref: '#/components/examples/verifyError'
         '503':
           description: Service Unavailable
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/errorResponseBody'
+                $ref: '#/components/schemas/verifyErrorResponse'
               examples:
-                exampleError:
-                  $ref: '#/components/examples/exampleError'
+                verifyError:
+                  $ref: '#/components/examples/verifyError'
       deprecated: false
 components:
   securitySchemes:
@@ -576,14 +593,24 @@ components:
         - inapplicable
         - error
       type: string
-    errorResponseBody:
-      title: Error response body
+    verifyErrorResponse:
+      title: Verify Bank Account error response schema
       type: object
       properties:
         code:
           description: Error Code
           type: string
         desc:
+          description: Error Description
+          type: string
+    insightsErrorResponse:
+      title: Insights error response schema
+      type: object
+      properties:
+        statusCode:
+          description: Error Code
+          type: integer
+        message:
           description: Error Description
           type: string
   parameters:
@@ -614,7 +641,7 @@ components:
       schema:
         $ref: '#/components/schemas/correlationId'
   examples:
-    exampleError:
+    verifyError:
       value:
         code: REQUEST_DOWNSTREAM
         desc: An issue occurred when the downstream service tried to handle the request
