@@ -57,20 +57,10 @@ paths:
           content:
             application/json:
               schema:
-                required:
-                  - origin
-                  - response
-                type: object
-                properties:
-                  origin: {}
-                  response:
-                    oneOf:
-                      - {}
-                      - $ref: '#/components/schemas/errorResponseBody'
-                additionalProperties: false
+                $ref: '#/components/schemas/errorResponseBody'
               examples:
-                badRequest:
-                  $ref: '#/components/examples/errorResponseBodyExample'
+                exampleError:
+                  $ref: '#/components/examples/exampleError'
         '500':
           description: Internal Server Error
           headers:
@@ -79,25 +69,19 @@ paths:
           content:
             application/json:
               schema:
-                required:
-                  - origin
-                  - response
-                type: object
-                properties:
-                  origin: {}
-                  response:
-                    oneOf:
-                      - {}
-                      - $ref: '#/components/schemas/error500ResponseBody'
-                additionalProperties: false
+                $ref: '#/components/schemas/errorResponseBody'
               examples:
-                internalServerError:
-                  $ref: '#/components/examples/error500ResponseBodyExample'
+                exampleError:
+                  $ref: '#/components/examples/exampleError'
         '503':
           description: Service Unavailable
           content:
-            application/json;charset=UTF-8:
-              schema: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+              examples:
+                exampleError:
+                  $ref: '#/components/examples/exampleError'
       deprecated: false
   /verify/personal:
     post:
@@ -157,20 +141,10 @@ paths:
           content:
             application/json:
               schema:
-                required:
-                  - origin
-                  - response
-                type: object
-                properties:
-                  origin: {}
-                  response:
-                    oneOf:
-                      - {}
-                      - $ref: '#/components/schemas/errorResponseBody'
-                additionalProperties: false
+                $ref: '#/components/schemas/errorResponseBody'
               examples:
-                badRequest:
-                  $ref: '#/components/examples/errorResponseBodyExample'
+                exampleError:
+                  $ref: '#/components/examples/exampleError'
         '500':
           description: Internal Server Error
           headers:
@@ -179,25 +153,19 @@ paths:
           content:
             application/json:
               schema:
-                required:
-                  - origin
-                  - response
-                type: object
-                properties:
-                  origin: {}
-                  response:
-                    oneOf:
-                      - {}
-                      - $ref: '#/components/schemas/error500ResponseBody'
-                additionalProperties: false
+                $ref: '#/components/schemas/errorResponseBody'
               examples:
-                internalServerError:
-                  $ref: '#/components/examples/error500ResponseBodyExample'
+                exampleError:
+                  $ref: '#/components/examples/exampleError'
         '503':
           description: Service Unavailable
           content:
-            application/json;charset=UTF-8:
-              schema: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+              examples:
+                exampleError:
+                  $ref: '#/components/examples/exampleError'
       deprecated: false
   /verify/business:
     post:
@@ -256,20 +224,10 @@ paths:
           content:
             application/json:
               schema:
-                required:
-                  - origin
-                  - response
-                type: object
-                properties:
-                  origin: {}
-                  response:
-                    oneOf:
-                      - {}
-                      - $ref: '#/components/schemas/errorResponseBody'
-                additionalProperties: false
+                $ref: '#/components/schemas/errorResponseBody'
               examples:
-                badRequest:
-                  $ref: '#/components/examples/errorResponseBodyExample'
+                exampleError:
+                  $ref: '#/components/examples/exampleError'
         '500':
           description: Internal Server Error
           headers:
@@ -278,25 +236,19 @@ paths:
           content:
             application/json:
               schema:
-                required:
-                  - origin
-                  - response
-                type: object
-                properties:
-                  origin: {}
-                  response:
-                    oneOf:
-                      - {}
-                      - $ref: '#/components/schemas/error500ResponseBody'
-                additionalProperties: false
+                $ref: '#/components/schemas/errorResponseBody'
               examples:
-                internalServerError:
-                  $ref: '#/components/examples/error500ResponseBodyExample'
+                exampleError:
+                  $ref: '#/components/examples/exampleError'
         '503':
           description: Service Unavailable
           content:
-            application/json;charset=UTF-8:
-              schema: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+              examples:
+                exampleError:
+                  $ref: '#/components/examples/exampleError'
       deprecated: false
 components:
   securitySchemes:
@@ -628,15 +580,11 @@ components:
       title: Error response body
       type: object
       properties:
-        error:
-          description: error
+        code:
+          description: Error Code
           type: string
-    error500ResponseBody:
-      title: Error 500 response body
-      type: object
-      properties:
-        error:
-          description: error
+        desc:
+          description: Error Description
           type: string
   parameters:
     correlationId:
@@ -666,11 +614,7 @@ components:
       schema:
         $ref: '#/components/schemas/correlationId'
   examples:
-    errorResponseBodyExample:
+    exampleError:
       value:
-        error: '{code: REQUEST_DOWNSTREAM, desc: An issue occurred when the downstream
-          service tried to handle the request}'
-    error500ResponseBodyExample:
-      value:
-        error: '{code: REQUEST_DOWNSTREAM, desc: An issue occurred when the downstream
-          service tried to handle the request}'
+        code: REQUEST_DOWNSTREAM
+        desc: An issue occurred when the downstream service tried to handle the request
