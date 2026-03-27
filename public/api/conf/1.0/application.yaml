@@ -348,6 +348,12 @@ components:
               type: string
               example:
                 - '832237'
+            rollNumber:
+              description: Building society roll number, required for accounts which are held at a building society and have a sort code which falls within certain ranges. Should be left blank for all other accounts.
+              maxLength: 30
+              type: string
+              example:
+                - 'ABC 1234567 XYZ'
         subject:
           description: Subject
           required:
@@ -436,6 +442,12 @@ components:
               type: string
               example:
                 - '463509'
+            rollNumber:
+              description: Building society roll number, required for accounts which are held at a building society and have a sort code which falls within certain ranges. Should be left blank for all other accounts.
+              maxLength: 30
+              type: string
+              example:
+                - 'ABC 1234567 XYZ'
         business:
           description: Business
           required:
